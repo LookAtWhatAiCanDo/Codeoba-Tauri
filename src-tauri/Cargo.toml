@@ -31,4 +31,7 @@ wasmtime = "22"
 ed25519-dalek = "2"
 chrono = { version = "0.4", features = ["serde"] }
 dirs = "6"
+regex = "1"
+uuid = { version = "1", features = ["v3", "v4", "v5"] }
+tempfile = "3"
 

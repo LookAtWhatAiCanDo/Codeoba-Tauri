@@ -98,7 +98,7 @@ impl SourceAdapter for ClaudeSource {
 
 impl ClaudeSource {
     fn get_base_dir(&self) -> PathBuf {
-        let home = dirs::home_dir().unwrap_or_default();
+        let home = crate::parsers::get_home_dir();
         home.join(".claude/projects")
     }
 
@@ -292,7 +292,7 @@ impl ClaudeSource {
         let last_time = raw_turns.last().map(|t| t.timestamp).unwrap_or(last_modified);
 
         let clean_thread_name = if let Some(ref s) = slug {
-            let home = dirs::home_dir().unwrap_or_default();
+            let home = crate::parsers::get_home_dir();
             let plan_file = home.join(format!(".claude/plans/{}.md", s));
             if plan_file.exists() && plan_file.is_file() {
                 if let Ok(file) = File::open(&plan_file) {
