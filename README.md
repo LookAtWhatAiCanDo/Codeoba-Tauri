@@ -146,3 +146,13 @@ To allow the release action to compile, sign, and notarize the packages successf
 | `AZURE_CERTIFICATE_PROFILE_NAME` | The name of your Azure Certificate Profile. | Windows |
 | `AZURE_TRUSTED_SIGNING_ENDPOINT` | Azure signing service endpoint (e.g. `https://cus.codesigning.azure.net/`). | Windows |
 
+### 2. CI/CD Linker & Cache Optimizations
+To support compilation of native C/C++ dependencies in Rust (such as `esaxx-rs` and `ort`/ONNX Runtime) across different operating systems, the workflow has been optimized with the following configurations:
+
+* **Dynamic MSVC C Runtime Linking (`ESAXX_DYNAMIC_LINK=1`):**  
+  Windows MSVC builds use the dynamic CRT (`/MD`) by default. However, some dependencies like `esaxx-rs` historically force static CRT linking (`/MT`), causing `LNK2038` linker mismatches. The workflow compiles a patched dynamic-link-enabled fork and sets `ESAXX_DYNAMIC_LINK: '1'` globally to ensure consistent CRT linkage.
+* **Workspace-Relative ONNX Runtime Caching (`ORT_CACHE_DIR`):**  
+  By default, `ort` downloads its prebuilt ONNX Runtime binaries into the runner's user home directory (which is not cached). This causes missing binary linker errors on subsequent builds. We redirect downloads to `src-tauri/target/ort_cache` so that the binaries are persisted and restored together with Cargo's compiled target objects.
+* **Automatic Workflow Cache Invalidation:**  
+  The Rust cache step uses `prefix-key: ${{ hashFiles('.github/workflows/build-desktop.yml') }}`. This automatically invalidates the cache whenever the build configuration or environment variables are modified, preventing stale caching issues.
+
