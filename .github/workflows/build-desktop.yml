@@ -19,12 +19,13 @@ env:
   ESAXX_DYNAMIC_LINK: '1'
   ORT_CACHE_DIR: ${{ github.workspace }}/ort_cache
   CARGO_NET_RETRY: 10
-  SKIP_STAPLING: 'true'
+  SKIP_STAPLING: 'false'
 
 jobs:
   build:
     name: Build & Package (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'Production' || null }}
     strategy:
       fail-fast: false
