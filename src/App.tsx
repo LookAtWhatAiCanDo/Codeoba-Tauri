@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { getVersion } from "@tauri-apps/api/app";
 import { Sidebar } from "./components/Sidebar";
 import { DetailPane } from "./components/DetailPane";
 import { Dashboard } from "./components/Dashboard";
@@ -248,7 +249,8 @@ function App() {
             return;
           }
 
-          logFE("info", "Background Updater: Initiating background check. Current version: v0.1.0");
+          const currentVersion = await getVersion();
+          logFE("info", `Background Updater: Initiating background check. Current version: v${currentVersion}`);
           logFE("info", "Background Updater: Querying the update service...");
           const update = await check();
           if (update && update.available) {

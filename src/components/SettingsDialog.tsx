@@ -12,6 +12,7 @@ import {
 } from "lucide-solid";
 import { invoke } from "@tauri-apps/api/core";
 import { check } from "@tauri-apps/plugin-updater";
+import { getVersion } from "@tauri-apps/api/app";
 import { logFE } from "../utils/logger";
 
 interface SourceMetadata {
@@ -52,13 +53,16 @@ export const SettingsDialog = (props: SettingsDialogProps) => {
   const [checkingUpdates, setCheckingUpdates] = createSignal(false);
   const [updateCheckResult, setUpdateCheckResult] = createSignal<string | null>(null);
   const [updaterActive, setUpdaterActive] = createSignal(false);
+  const [appVersion, setAppVersion] = createSignal("0.1.0");
 
   onMount(async () => {
     try {
       const active = await invoke<boolean>("is_updater_active");
       setUpdaterActive(active);
+      const v = await getVersion();
+      setAppVersion(v);
     } catch (err) {
-      logFE("error", `Failed to query updater active state: ${err}`);
+      logFE("error", `Failed to query updater active/version state: ${err}`);
     }
   });
 
@@ -127,7 +131,7 @@ export const SettingsDialog = (props: SettingsDialogProps) => {
     setCheckingUpdates(true);
     setUpdateCheckResult(null);
     try {
-      logFE("info", "Settings: Initiating check for updates. Current version: v0.1.0");
+      logFE("info", `Settings: Initiating check for updates. Current version: v${appVersion()}`);
       logFE("info", "Settings: Querying the update service...");
       const update = await check();
       setCheckingUpdates(false);
@@ -363,7 +367,7 @@ export const SettingsDialog = (props: SettingsDialogProps) => {
                       </label>
                     </div>
                     <div class="flex items-center justify-between pt-1 text-[11px] border-t border-border/30">
-                      <span class="text-text-secondary">Current Version: v0.1.0</span>
+                      <span class="text-text-secondary">Current Version: v{appVersion()}</span>
                       <button
                         onClick={handleCheckUpdates}
                         disabled={checkingUpdates()}

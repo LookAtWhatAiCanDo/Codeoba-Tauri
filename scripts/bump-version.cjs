@@ -86,6 +86,17 @@ if (fs.existsSync(cargoPath)) {
   if (updated) {
     fs.writeFileSync(cargoPath, lines.join('\n'));
     console.log(`Updated Cargo.toml version to ${version}`);
+
+    try {
+      console.log('Syncing Cargo.lock...');
+      execSync('cargo update -p codeoba-tauri', {
+        cwd: path.dirname(cargoPath),
+        stdio: 'inherit'
+      });
+      console.log('Updated Cargo.lock successfully');
+    } catch (err) {
+      console.warn(`Warning: Could not update Cargo.lock automatically: ${err.message}`);
+    }
   } else {
     console.warn('Could not find package version in Cargo.toml');
   }
@@ -95,7 +106,7 @@ if (fs.existsSync(cargoPath)) {
 if (shouldCommit) {
   try {
     console.log('Staging modified version files...');
-    execSync('git add package.json package-lock.json src-tauri/tauri.conf.json src-tauri/Cargo.toml', { stdio: 'inherit' });
+    execSync('git add package.json package-lock.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock', { stdio: 'inherit' });
     
     const commitMessage = `chore(release): bump version to v${version}`;
     console.log(`Committing: "${commitMessage}"`);
