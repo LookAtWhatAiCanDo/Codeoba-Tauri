@@ -131,14 +131,13 @@ pub async fn search_sessions<R: tauri::Runtime>(
     };
 
     let mut results = if use_semantic {
-        let home = crate::parsers::get_home_dir();
-        let model_path = home.join(".codeoba/models/model_quantized.onnx");
-        let vocab_path = home.join(".codeoba/models/vocab.txt");
+        let model_path = crate::search::downloader::get_model_file();
+        let vocab_path = crate::search::downloader::get_vocab_file();
 
         if !model_path.exists() || !vocab_path.exists() {
             return Err("Semantic search is unavailable: ONNX model/vocab not found under ~/.codeoba/models/. Please download the model or use lexical search.".to_string());
         }
-        let mut onnx_embedder = crate::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path)?;
+        let onnx_embedder = crate::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path)?;
         let query_vector = onnx_embedder.get_embeddings(&query)?;
 
         let embeddings_guard = state.embeddings.read().map_err(|e| e.to_string())?;

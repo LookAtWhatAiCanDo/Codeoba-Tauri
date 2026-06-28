@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use tauri::Emitter;
 use futures_util::StreamExt;
 
-const MODEL_URL: &str = "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/onnx/model_quantized.onnx";
-const VOCAB_URL: &str = "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/vocab.txt";
+pub const MODEL_FILENAME: &str = "model.onnx";
+pub const VOCAB_FILENAME: &str = "vocab.txt";
 
 pub fn get_model_dir() -> PathBuf {
     let home = crate::parsers::get_home_dir();
@@ -15,17 +15,17 @@ pub fn get_model_dir() -> PathBuf {
 }
 
 pub fn get_model_file() -> PathBuf {
-    get_model_dir().join("model_quantized.onnx")
+    get_model_dir().join(MODEL_FILENAME)
 }
 
 pub fn get_vocab_file() -> PathBuf {
-    get_model_dir().join("vocab.txt")
+    get_model_dir().join(VOCAB_FILENAME)
 }
 
 pub fn is_model_downloaded() -> bool {
     let model = get_model_file();
     let vocab = get_vocab_file();
-    model.exists() && model.metadata().map(|m| m.len()).unwrap_or(0) > 10_000_000
+    model.exists() && model.metadata().map(|m| m.len()).unwrap_or(0) > 40_000_000
         && vocab.exists() && vocab.metadata().map(|m| m.len()).unwrap_or(0) > 100_000
 }
 
@@ -38,12 +38,17 @@ pub fn delete_model_files() {
     if vocab.exists() {
         let _ = fs::remove_file(vocab);
     }
+    // Also clean up any legacy model_quantized.onnx
+    let legacy_model = get_model_dir().join("model_quantized.onnx");
+    if legacy_model.exists() {
+        let _ = fs::remove_file(legacy_model);
+    }
 }
 
 pub async fn download_model<R: tauri::Runtime>(app_handle: tauri::AppHandle<R>) -> Result<(), String> {
     let model_dir = get_model_dir();
-    let temp_model = model_dir.join("model_quantized.onnx.tmp");
-    let temp_vocab = model_dir.join("vocab.txt.tmp");
+    let temp_model = model_dir.join(format!("{}.tmp", MODEL_FILENAME));
+    let temp_vocab = model_dir.join(format!("{}.tmp", VOCAB_FILENAME));
 
     // Clean up any stale temp files
     if temp_model.exists() {
@@ -63,21 +68,24 @@ pub async fn download_model<R: tauri::Runtime>(app_handle: tauri::AppHandle<R>) 
         let _ = handle_clone.emit("semantic-model-download-progress", progress);
     };
 
-    // 1. Download vocab.txt (~232 KB, mapped to 0% - 2% of overall progress)
-    crate::log_info!("Starting vocab download from {}", VOCAB_URL);
-    download_file_with_progress(&client, VOCAB_URL, &temp_vocab, 0.0, 0.02, emit_prog.clone()).await?;
+    let vocab_url = format!("https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/{}", VOCAB_FILENAME);
+    let model_url = format!("https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/onnx/{}", MODEL_FILENAME);
 
-    // 2. Download model_quantized.onnx (~22.9 MB, mapped to 2% - 100% of overall progress)
-    crate::log_info!("Starting model download from {}", MODEL_URL);
-    download_file_with_progress(&client, MODEL_URL, &temp_model, 0.02, 1.0, emit_prog.clone()).await?;
+    // 1. Download vocab.txt (~232 KB, mapped to 0% - 2% of overall progress)
+    crate::log_info!("Starting vocab download from {}", vocab_url);
+    download_file_with_progress(&client, &vocab_url, &temp_vocab, 0.0, 0.02, emit_prog.clone()).await?;
+
+    // 2. Download model.onnx (~90.3 MB, mapped to 2% - 100% of overall progress)
+    crate::log_info!("Starting model download from {}", model_url);
+    download_file_with_progress(&client, &model_url, &temp_model, 0.02, 1.0, emit_prog.clone()).await?;
 
     // Atomic rename
     let model_dest = get_model_file();
     let vocab_dest = get_vocab_file();
 
     if temp_vocab.exists() && temp_model.exists() {
-        fs::rename(&temp_vocab, &vocab_dest).map_err(|e| format!("Failed to rename vocab.txt: {}", e))?;
-        fs::rename(&temp_model, &model_dest).map_err(|e| format!("Failed to rename model_quantized.onnx: {}", e))?;
+        fs::rename(&temp_vocab, &vocab_dest).map_err(|e| format!("Failed to rename {}: {}", VOCAB_FILENAME, e))?;
+        fs::rename(&temp_model, &model_dest).map_err(|e| format!("Failed to rename {}: {}", MODEL_FILENAME, e))?;
         crate::log_info!("Semantic search model downloaded successfully to {:?}", model_dir);
         // Emit final 1.0 progress to be sure
         let _ = app_handle.emit("semantic-model-download-progress", 1.0f32);

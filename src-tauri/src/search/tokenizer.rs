@@ -56,6 +56,10 @@ impl WordPieceTokenizer {
             if word.is_empty() {
                 continue;
             }
+            if word.len() > 100 {
+                input_ids.push(self.unk_id);
+                continue;
+            }
             let mut word_tokens = Vec::new();
             let mut start = 0;
             let mut is_bad = false;

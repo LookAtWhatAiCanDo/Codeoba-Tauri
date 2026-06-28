@@ -38,15 +38,14 @@ fn main() {
 
             let search_start = std::time::Instant::now();
             let results = if use_semantic {
-                let home = codeoba_lib::parsers::get_home_dir();
-                let model_path = home.join(".codeoba/models/model_quantized.onnx");
-                let vocab_path = home.join(".codeoba/models/vocab.txt");
+                let model_path = codeoba_lib::search::downloader::get_model_file();
+                let vocab_path = codeoba_lib::search::downloader::get_vocab_file();
 
                 if !model_path.exists() || !vocab_path.exists() {
                     println!("Error: Semantic search is unavailable because the ONNX model or vocab.txt was not found under ~/.codeoba/models/.");
                     return;
                 }
-                let mut onnx_embedder = match codeoba_lib::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path) {
+                let onnx_embedder = match codeoba_lib::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path) {
                     Ok(e) => e,
                     Err(err) => {
                         println!("Error loading model: {}", err);

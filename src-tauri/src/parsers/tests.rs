@@ -876,16 +876,20 @@ fn test_word_piece_tokenizer() {
     assert_eq!(tokenized.attention_mask[0], 1, "Attention mask for CLS should be 1");
     assert_eq!(tokenized.attention_mask[6], 1, "Attention mask for SEP should be 1");
     assert_eq!(tokenized.attention_mask[7], 0, "Attention mask for padding should be 0");
+
+    // Test long word to avoid hang
+    let long_word = "a".repeat(1000);
+    let tokenized_long = tokenizer.tokenize_to_ids(&long_word, 8);
+    assert_eq!(tokenized_long.input_ids[1], 1, "Long word should resolve to [UNK] (id 1)");
 }
 
 #[test]
 fn test_onnx_semantic_embedder() {
-    let home = crate::parsers::get_home_dir();
-    let model_path = home.join(".codeoba/models/model_quantized.onnx");
-    let vocab_path = home.join(".codeoba/models/vocab.txt");
+    let model_path = crate::search::downloader::get_model_file();
+    let vocab_path = crate::search::downloader::get_vocab_file();
 
     if model_path.exists() && vocab_path.exists() {
-        let mut embedder = crate::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path).unwrap();
+        let embedder = crate::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path).unwrap();
         let text1 = "how to build a project with kotlin";
         let text2 = "how do I build kotlin projects";
         let text3 = "apples grow on trees in the autumn";

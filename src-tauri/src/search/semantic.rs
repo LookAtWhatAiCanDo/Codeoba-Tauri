@@ -24,7 +24,7 @@ impl OnnxSemanticEmbedder {
         Ok(Self { runnable, tokenizer })
     }
 
-    pub fn get_embeddings(&mut self, text: &str) -> Result<Vec<f32>, String> {
+    pub fn get_embeddings(&self, text: &str) -> Result<Vec<f32>, String> {
         let tokenized = self.tokenizer.tokenize_to_ids(text, 256);
         let seq_len = tokenized.input_ids.len();
 
