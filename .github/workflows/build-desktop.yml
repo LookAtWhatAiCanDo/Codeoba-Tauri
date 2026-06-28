@@ -247,7 +247,7 @@ jobs:
             fi
           fi
 
-          if [[ "${{ matrix.platform }}" == "windows" ]]; then
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             echo "Windows platform detected. Removing Git link.exe to prevent shadowing MSVC link.exe..."
             rm -f /usr/bin/link
           fi
