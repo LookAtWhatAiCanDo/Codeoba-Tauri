@@ -342,6 +342,103 @@ During workflow execution on the `windows-latest` runner when a release tag is p
           timestamp-rfc3161: 'http://timestamp.acs.microsoft.com'
 ```
 
+## Linux Setup (GPG Signing & Distribution)
+
+To establish trust for Linux users, Codeoba-Tauri supports two primary distribution paths:
+1. **Direct Verifiable Downloads (Signed `.deb` packages)**: The generated Debian package (`.deb`) is signed using a GPG private key in the CI/CD pipeline via `dpkg-sig`.
+2. **Universal Sandboxed App Store (Flathub / Flatpak)**: Distributed on Flathub, which builds/wraps the application and signs it using Flathub's trusted GPG key.
+
+---
+
+### 1. Standalone GPG signing of Debian Packages (.deb)
+
+To sign Debian packages in CI, you must generate a GPG key, export the private key, and configure GitHub Secrets.
+
+#### Step 1: Generate a GPG Keypair
+Run the following command on a secure local machine:
+```bash
+gpg --full-generate-key
+```
+- Select option: `RSA and RSA` (default).
+- Select key size: `4096` bits.
+- Set expiration: `0` (or choose a reasonable expiration date, e.g. 2 years).
+- Enter Real Name: `What AI Can Do, LLC`
+- Enter Email: `developer@whataicando.com`
+- Set a secure passphrase.
+
+Identify your generated key ID (8-character hex string) by running:
+```bash
+gpg --list-secret-keys --keyid-format LONG
+```
+*(For example: `sec   rsa4096/A1B2C3D4E5F67890 2026-06-26 ...`, where `A1B2C3D4E5F67890` is the full Key ID, and the last 8 characters `E5F67890` is the short Key ID).*
+
+#### Step 2: Export the GPG Keys for GitHub Secrets
+Export the private key as an ASCII-armored string, base64-encode it, and copy it to your clipboard:
+```bash
+# Export and copy base64-encoded private key
+gpg --armor --export-secret-keys A1B2C3D4E5F67890 | base64 | pbcopy
+```
+
+Configure these secrets under **Settings -> Secrets and variables -> Actions** in the `Codeoba-Tauri` GitHub Repository:
+
+| Secret Name | Description |
+| :--- | :--- |
+| `LINUX_GPG_PRIVATE_KEY` | The complete base64-encoded string of the ASCII-armored GPG private key. |
+| `LINUX_GPG_PASSPHRASE` | The passphrase used to protect the GPG private key. |
+
+#### Step 3: Export and Publish the Public GPG Key
+For users to verify the package signature, export the GPG public key:
+```bash
+gpg --armor --export A1B2C3D4E5F67890 > codeoba-public.key
+```
+Host this file on the public website (e.g. `https://whataicando.com/codeoba-public.key`) or include it in the GitHub Release assets.
+
+#### Step 4: Verify the GPG Signature on Linux
+To verify a signed `.deb` file on a Linux machine:
+1. Download the public key and import it:
+   ```bash
+   gpg --import codeoba-public.key
+   ```
+2. Verify the signature embedded inside the package using `dpkg-sig`:
+   ```bash
+   sudo apt-get install -y dpkg-sig
+   dpkg-sig --verify codeoba-tauri_0.1.4_amd64.deb
+   ```
+   *Expected output: A valid signature line indicating it was signed by `builder` with your key.*
+
+---
+
+### 2. Flathub & Flatpak Distribution (Recommended)
+
+Flatpak provides an isolated container runtime and is pre-trusted by modern Linux distributions like Fedora, Linux Mint, Ubuntu, and Arch.
+
+#### Flatpak Manifest
+We maintain a Flatpak manifest at [com.whataicando.codeoba.yaml](../packaging/com.whataicando.codeoba.yaml). It is a simple wrapper manifest that takes our release `.deb` package, extracts it into the Flatpak sandbox environment, maps execution targets, and applies desktop/icon configurations.
+
+#### Flathub Submission & Trust
+1. **GPG Signing**: Flathub's build system compiles the Flatpak and cryptographically signs it on our behalf using Flathub's GPG keys. Modern Linux installations trust the Flathub GPG key automatically.
+2. **Verified Developer Badge**:
+   - Register a developer account on [Flathub](https://flathub.org).
+   - Under the App Settings page, initiate the verification process.
+   - Verify ownership of `whataicando.com` by publishing a TXT record containing the verification token to your DNS settings.
+   - Once verified, Flathub displays a verified checkmark on the Codeoba store page, proving the publisher identity.
+
+---
+
+### 3. Snap Store & Snapcraft Distribution (Alternative)
+
+For Ubuntu-centric distributions, Snap provides Canonical-managed sandboxing and store-level signing.
+
+1. **Auto-Signing**: When pushing a snap package (`.snap`) to the Snap Store, Canonical automatically signs it using their trusted store-level signing keys.
+2. **Publishing**:
+   - Set up a developer account on [Snapcraft.io](https://snapcraft.io).
+   - Reserve the application name `codeoba`.
+   - To automate CI/CD publishing, generate a login token (macaroon) locally:
+     ```bash
+     snapcraft export-login --out snapcraft.login
+     ```
+   - Store the contents of `snapcraft.login` as a GitHub Secret (`SNAPCRAFT_TOKEN`) and run `snapcraft upload` in GitHub Actions.
+
 ---
 
 ## 📊 Monitoring & Logging
@@ -415,7 +512,7 @@ To secure auto-updates, Tauri compiles a public key into the application binary.
 >    - The corresponding public key is saved in GitHub Repository Variables as `CODEOBA_TAURI_UPDATE_PUBLIC_KEY_PROD`.
 >
 > **Defaulting Updater to Inactive in Dev**:
-> To keep local development silent and avoid unsolicited remote update checks when developers clone and run the app, [tauri.conf.json](file:///Users/pv/Dev/GitHub/LookAtWhatAiCanDo/Codeoba-All/Codeoba-Tauri/src-tauri/tauri.conf.json) defaults `"active": false` under the `"updater"` plugin configuration.
+> To keep local development silent and avoid unsolicited remote update checks when developers clone and run the app, [tauri.conf.json](../src-tauri/tauri.conf.json) defaults `"active": false` under the `"updater"` plugin configuration.
 > 
 > To manually test the updater locally during development, temporarily change `"active": false` to `"active": true` under `plugins.updater` in `src-tauri/tauri.conf.json`.
 > 
@@ -450,7 +547,7 @@ npm run tauri signer generate -- -w secrets/codeoba-updater.key
 > *Note: Overwriting an active release signing key will break update checks for any installed clients compiled with the old public key, unless you strictly follow the Key Rotation Protocol below.*
 
 * **Password**: You will be prompted to enter a password. This password is your **`CODEOBA_TAURI_UPDATE_PRIVATE_KEY_PASSWORD_DEV`** or **`CODEOBA_TAURI_UPDATE_PRIVATE_KEY_PASSWORD_PROD`**.
-* **Public Key**: Printed to stdout. Paste this value into [tauri.conf.json](file:///Users/pv/Dev/GitHub/LookAtWhatAiCanDo/Codeoba-All/Codeoba-Tauri/src-tauri/tauri.conf.json) under `plugins.updater.pubkey`.
+* **Public Key**: Printed to stdout. Paste this value into [tauri.conf.json](../src-tauri/tauri.conf.json) under `plugins.updater.pubkey`.
 * **Private Key**: Saved to `secrets/codeoba-updater.key`. Upload the complete text contents of this file to GitHub Secrets as **`CODEOBA_TAURI_UPDATE_PRIVATE_KEY_DEV`** or **`CODEOBA_TAURI_UPDATE_PRIVATE_KEY_PROD`**.
 
 ---
@@ -464,7 +561,7 @@ To migrate existing users seamlessly, you must use a **Two-Step Transition Relea
 #### Step 1: Build the Bridge Release (e.g. `v1.2.0`)
 1. Generate your new key pair locally (`npx tauri signer generate`).
 2. Update the public key (`pubkey` in `tauri.conf.json`) to the **new** public key.
-3. Update the `dev_keys` or `prod_keys` array in [lib.rs](file:///Users/pv/Dev/GitHub/LookAtWhatAiCanDo/Codeoba-All/Codeoba-Tauri/src-tauri/src/lib.rs) to include the **new** public key. (The verification system allows multiple active keys to handle rotations smoothly).
+3. Update the `dev_keys` or `prod_keys` array in [lib.rs](../src-tauri/src/lib.rs) to include the **new** public key. (The verification system allows multiple active keys to handle rotations smoothly).
 4. Keep the **old** private key configured in your GitHub Repository Secrets (`CODEOBA_TAURI_UPDATE_PRIVATE_KEY_PROD` or `_DEV`).
 5. Push the release tag (e.g., `v1.2.0`). This compiles the application with the **new public key** inside, but signs the installer and `latest.json` manifest with the **old private key**.
 6. Existing users running older versions (e.g., `v1.1.0`) will successfully download and verify this update because it was signed with the old private key they expect. Once installed, they are now running `v1.2.0` and possess the new public key.
@@ -576,7 +673,7 @@ Here is how a legitimate developer can test the update mechanism locally:
 ### Option A: Testing locally against a mock local server (localhost)
 If you want to test the update flow end-to-end completely on your local machine:
 1. **Generate local keys**: Run `npm run generate-keys` to generate a temporary key pair. This will write the public key into `tauri.conf.json`.
-2. **Register the key in Rust**: Copy the generated public key string from `tauri.conf.json` and append it to the `dev_keys` array in [lib.rs](file:///Users/pv/Dev/GitHub/LookAtWhatAiCanDo/Codeoba-All/Codeoba-Tauri/src-tauri/src/lib.rs):
+2. **Register the key in Rust**: Copy the generated public key string from `tauri.conf.json` and append it to the `dev_keys` array in [lib.rs](../src-tauri/src/lib.rs):
    ```rust
    let dev_keys = [
        "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU4RkNDQUJEOEUwOEM4Njg...",

@@ -1,0 +1,46 @@
+app-id: com.whataicando.codeoba
+runtime: org.gnome.Platform
+runtime-version: '45'
+sdk: org.gnome.Sdk
+command: codeoba-tauri
+finish-args:
+  # Sandbox permissions required by the Tauri app to render the WebView and play audio
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=network
+  - --share=ipc
+  - --device=dri
+modules:
+  - name: codeoba-tauri
+    buildsystem: simple
+    build-commands:
+      # Unpack the Debian package into the /app prefix
+      - ar x codeoba-tauri.deb
+      - tar xf data.tar.xz -C /app
+      # Create symlink for the executable in /app/bin
+      - mkdir -p /app/bin
+      - ln -sf /app/usr/bin/codeoba-tauri /app/bin/codeoba-tauri
+      # Install desktop file and icons into standard Flatpak paths
+      - mkdir -p /app/share/applications
+      - cp /app/usr/share/applications/codeoba-tauri.desktop /app/share/applications/com.whataicando.codeoba.desktop
+      # Adjust desktop file execution path to match the Flatpak command
+      - sed -i 's|Exec=/usr/bin/codeoba-tauri|Exec=codeoba-tauri|g' /app/share/applications/com.whataicando.codeoba.desktop
+      # Copy icons
+      - mkdir -p /app/share/icons
+      - cp -r /app/usr/share/icons/* /app/share/icons/ || true
+    sources:
+      # ========================================================================
+      # FOR LOCAL TESTING: Points to the local build output
+      # ========================================================================
+      - type: file
+        path: ../src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb/codeoba-tauri_0.1.4_amd64.deb
+        dest-filename: codeoba-tauri.deb
+
+      # ========================================================================
+      # FOR PRODUCTION FLATHUB RELEASES: Un-comment this block and update URL/SHA256
+      # ========================================================================
+      # - type: file
+      #   url: https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/v0.1.4/codeoba-tauri_0.1.4_amd64.deb
+      #   sha256: "<insert-sha256-hash-here>"
+      #   dest-filename: codeoba-tauri.deb
