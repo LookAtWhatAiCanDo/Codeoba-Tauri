@@ -20,6 +20,7 @@ env:
   CARGO_NET_RETRY: 10
   SKIP_STAPLING: 'false'
   MACOS_SIGNING_IDENTITY: ''
+  CC_aarch64_pc_windows_msvc: clang
 
 jobs:
   build:
@@ -212,6 +213,17 @@ jobs:
             echo "Successfully resolved macOS Signing Identity: $IDENTITY"
             echo "MACOS_SIGNING_IDENTITY=$IDENTITY" >> $GITHUB_ENV
           fi
+      - name: Fetch and Patch dependencies
+        run: |
+          cd src-tauri
+          if [[ "${{ matrix.platform }}" == "macos" ]]; then
+            cargo fetch --target x86_64-apple-darwin
+            cargo fetch --target aarch64-apple-darwin
+          elif [[ "${{ matrix.target }}" != "" ]]; then
+            cargo fetch --target ${{ matrix.target }}
+          fi
+          cd ..
+          node scripts/patch-tract-linalg.cjs
 
       - name: Build Tauri Application
         env:
