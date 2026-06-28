@@ -19,7 +19,6 @@ env:
   ESAXX_DYNAMIC_LINK: '1'
   CARGO_NET_RETRY: 10
   SKIP_STAPLING: 'false'
-  CC_aarch64_pc_windows_msvc: clang
 
 jobs:
   build:
@@ -50,14 +49,7 @@ jobs:
               src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi.zip.sig
               src-tauri/target/x86_64-pc-windows-msvc/release/latest.json
             platform: windows-x64
-          - os: windows-latest
-            target: aarch64-pc-windows-msvc
-            artifact-path: |
-              src-tauri/target/aarch64-pc-windows-msvc/release/bundle/msi/*.msi
-              src-tauri/target/aarch64-pc-windows-msvc/release/bundle/msi/*.msi.zip
-              src-tauri/target/aarch64-pc-windows-msvc/release/bundle/msi/*.msi.zip.sig
-              src-tauri/target/aarch64-pc-windows-msvc/release/latest.json
-            platform: windows-arm64
+
           - os: ubuntu-24.04
             target: x86_64-unknown-linux-gnu
             artifact-path: |
@@ -140,7 +132,8 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev \
             patchelf \
-            rpm
+            rpm \
+            xdg-utils
 
       - name: Install Node Modules
         run: npm ci
