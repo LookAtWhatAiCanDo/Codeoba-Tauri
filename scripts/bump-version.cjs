@@ -104,7 +104,7 @@ try {
 
       try {
         console.log('Syncing Cargo.lock...');
-        execSync('cargo update -p codeoba-tauri', {
+        execSync('cargo update -p codeoba', {
           cwd: path.dirname(cargoPath),
           stdio: 'inherit'
         });

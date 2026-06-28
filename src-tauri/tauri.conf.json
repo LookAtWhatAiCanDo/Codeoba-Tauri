@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "codeoba-tauri",
+  "productName": "Codeoba",
   "version": "0.1.6",
   "identifier": "com.whataicando.codeoba",
   "build": {
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "codeoba-tauri",
+        "title": "Codeoba",
         "width": 800,
         "height": 600,
         "center": true,
@@ -28,6 +28,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "WhatAiCanDo",
     "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",

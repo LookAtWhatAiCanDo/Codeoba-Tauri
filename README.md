@@ -79,7 +79,7 @@ Because of how package managers (`npm`), the Tauri CLI, and the Rust compiler (`
 *   **Running the compiled production binary (no separator needed):**
     ```bash
     # Arguments are passed directly to the native executable
-    ./codeoba-tauri --reset-window
+    ./codeoba --reset-window
     ```
 
 ---

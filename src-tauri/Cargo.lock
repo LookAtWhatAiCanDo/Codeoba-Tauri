@@ -661,7 +661,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "codeoba-tauri"
+name = "codeoba"
 version = "0.1.6"
 dependencies = [
  "aes-gcm",

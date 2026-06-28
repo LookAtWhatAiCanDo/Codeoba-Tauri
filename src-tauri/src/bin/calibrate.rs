@@ -1,5 +1,5 @@
-use codeoba_tauri_lib::tokenizer::estimate_tokens;
-use codeoba_tauri_lib::parsers::{SourceAdapter, claude::ClaudeSource};
+use codeoba_lib::tokenizer::estimate_tokens;
+use codeoba_lib::parsers::{SourceAdapter, claude::ClaudeSource};
 
 fn main() {
     println!("==================================================");

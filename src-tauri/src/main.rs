@@ -19,10 +19,10 @@ fn main() {
         println!("Indexing sessions... please wait...");
 
         // Initialize cache key synchronously to prevent background race conditions
-        let _ = codeoba_tauri_lib::keyring::get_or_create_cache_key();
+        let _ = codeoba_lib::keyring::get_or_create_cache_key();
 
         tauri::async_runtime::block_on(async {
-            let state = codeoba_tauri_lib::search::SearchIndexState::new();
+            let state = codeoba_lib::search::SearchIndexState::new();
             if let Err(e) = state.rebuild(use_semantic, None::<tauri::AppHandle>).await {
                 println!("Error building index: {}", e);
                 return;
@@ -34,11 +34,11 @@ fn main() {
                 guard.values().cloned().collect::<Vec<_>>()
             };
 
-            let filter = codeoba_tauri_lib::search::SearchFilter::default();
+            let filter = codeoba_lib::search::SearchFilter::default();
 
             let search_start = std::time::Instant::now();
             let results = if use_semantic {
-                let home = codeoba_tauri_lib::parsers::get_home_dir();
+                let home = codeoba_lib::parsers::get_home_dir();
                 let model_path = home.join(".codeoba/models/model_quantized.onnx");
                 let vocab_path = home.join(".codeoba/models/vocab.txt");
 
@@ -46,7 +46,7 @@ fn main() {
                     println!("Error: Semantic search is unavailable because the ONNX model or vocab.txt was not found under ~/.codeoba/models/.");
                     return;
                 }
-                let mut onnx_embedder = match codeoba_tauri_lib::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path) {
+                let mut onnx_embedder = match codeoba_lib::search::semantic::OnnxSemanticEmbedder::new(&model_path, &vocab_path) {
                     Ok(e) => e,
                     Err(err) => {
                         println!("Error loading model: {}", err);
@@ -62,7 +62,7 @@ fn main() {
                 };
 
                 let embeddings_guard = state.embeddings.read().unwrap();
-                codeoba_tauri_lib::search::semantic::semantic_search(
+                codeoba_lib::search::semantic::semantic_search(
                     &sessions,
                     &embeddings_guard,
                     &query_vector,
@@ -70,7 +70,7 @@ fn main() {
                     &filter,
                 )
             } else {
-                codeoba_tauri_lib::search::lexical::lexical_search(&sessions, query, &filter)
+                codeoba_lib::search::lexical::lexical_search(&sessions, query, &filter)
             };
             println!("[main] Search execution time: {:?}", search_start.elapsed());
 
@@ -99,6 +99,6 @@ fn main() {
         });
         println!("==================================================");
     } else {
-        codeoba_tauri_lib::run()
+        codeoba_lib::run()
     }
 }
