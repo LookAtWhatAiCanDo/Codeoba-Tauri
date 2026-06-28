@@ -247,6 +247,11 @@ jobs:
             fi
           fi
 
+          if [[ "${{ matrix.platform }}" == "windows" ]]; then
+            echo "Windows platform detected. Removing Git link.exe to prevent shadowing MSVC link.exe..."
+            rm -f /usr/bin/link
+          fi
+
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             echo "Release tag detected. Building signed/notarized production binaries..."
             export TAURI_SIGNING_PRIVATE_KEY="$CODEOBA_TAURI_UPDATE_PRIVATE_KEY_PROD"
