@@ -337,10 +337,12 @@ jobs:
             
             # Run rpmsign helper script using expect to satisfy interactive prompt
             chmod +x scripts/rpm-sign.exp
-            scripts/rpm-sign.exp "${{ secrets.LINUX_GPG_PASSPHRASE }}" "$RPM_FILE"
+            scripts/rpm-sign.exp "$RPM_FILE"
           else
             echo "No RPM package found to sign."
           fi
+        env:
+          LINUX_GPG_PASSPHRASE: ${{ secrets.LINUX_GPG_PASSPHRASE }}
 
       - name: Clean Up Credentials
         if: always() && matrix.platform == 'macos' && startsWith(github.ref, 'refs/tags/v')

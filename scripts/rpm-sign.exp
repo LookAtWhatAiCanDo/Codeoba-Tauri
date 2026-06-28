@@ -1,13 +1,19 @@
 #!/usr/bin/expect -f
 
-# Usage: rpm-sign.exp <passphrase> <rpm_file>
-if {[llength $argv] < 2} {
-    send_user "Usage: rpm-sign.exp <passphrase> <rpm_file>\n"
+# Usage: rpm-sign.exp <rpm_file>
+# The passphrase must be provided in the LINUX_GPG_PASSPHRASE environment variable.
+if {[llength $argv] < 1} {
+    send_user "Usage: rpm-sign.exp <rpm_file>\n"
     exit 1
 }
 
-set passphrase [lindex $argv 0]
-set rpm_file [lindex $argv 1]
+if {![info exists env(LINUX_GPG_PASSPHRASE)]} {
+    send_user "Error: LINUX_GPG_PASSPHRASE environment variable is not set.\n"
+    exit 1
+}
+
+set passphrase [string trim $env(LINUX_GPG_PASSPHRASE) " \t\r\n"]
+set rpm_file [lindex $argv 0]
 
 # Spawn the rpmsign command
 spawn rpm --addsign $rpm_file
