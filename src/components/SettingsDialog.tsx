@@ -383,6 +383,12 @@ export const SettingsDialog = (props: SettingsDialogProps) => {
                 <span>{t("permissions.title")}</span>
               </button>
             </div>
+
+            {/* Version Display */}
+            <div class="mt-auto px-3 py-2 bg-background/50 border border-border/40 rounded-xl flex items-center justify-between text-[10px] text-text-secondary font-medium">
+              <span>Codeoba</span>
+              <span class="font-mono bg-surface border border-border/60 px-1.5 py-0.5 rounded text-accent">v{appVersion()}</span>
+            </div>
           </div>
 
           {/* Right Pane Content Area */}
