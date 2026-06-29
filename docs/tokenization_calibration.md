@@ -1,6 +1,6 @@
 # Hybrid Tokenization Calibration & Simulation System
 
-This document explains the design, motivation, and mechanics of the Hybrid Tokenization Calibration & Simulation System built for Codeoba-Tauri.
+This document explains the design, motivation, and mechanics of the Hybrid Tokenization Calibration & Simulation System built for Codeoba.
 
 ---
 

@@ -22,7 +22,7 @@ Before you run or compile the application, ensure you have the following install
 Follow these steps to run the application in your local development environment:
 
 ### 1. Install Dependencies
-Run the package installation command in the root of the `Codeoba-Tauri` directory:
+Run the package installation command in the root of the `Codeoba` directory:
 ```bash
 npm install
 ```

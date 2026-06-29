@@ -117,11 +117,27 @@ try {
     }
   }
 
-  // 5. Optional git commit
+  // 5. Update packaging/com.whataicando.codeoba.yaml
+  const flatpakPath = path.join(__dirname, '../packaging/com.whataicando.codeoba.yaml');
+  if (fs.existsSync(flatpakPath)) {
+    let content = fs.readFileSync(flatpakPath, 'utf8');
+    content = content.replace(
+      /(path:\s+.*\/codeoba_)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(_amd64\.deb)/g,
+      `$1${version}$2`
+    );
+    content = content.replace(
+      /(url:\s+.*\/download\/v)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(\/codeoba_)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(_amd64\.deb)/g,
+      `$1${version}$2${version}$3`
+    );
+    fs.writeFileSync(flatpakPath, content);
+    console.log(`Updated packaging/com.whataicando.codeoba.yaml version to ${version}`);
+  }
+
+  // 6. Optional git commit
   if (shouldCommit) {
     try {
       console.log('Staging modified version files...');
-      execSync('git add package.json package-lock.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock', { stdio: 'inherit' });
+      execSync('git add package.json package-lock.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock packaging/com.whataicando.codeoba.yaml', { stdio: 'inherit' });
       
       const commitMessage = `chore(release): bump version to v${version}`;
       console.log(`Committing: "${commitMessage}"`);

@@ -1,6 +1,6 @@
-# What AI Can Do, LLC: Codeoba-Tauri App Signing Guide
+# What AI Can Do, LLC: Codeoba App Signing Guide
 
-This document contains company-wide instructions for signing desktop applications built under **What AI Can Do, LLC** in the **Codeoba-Tauri** repository for macOS and Windows.
+This document contains company-wide instructions for signing desktop applications built under **What AI Can Do, LLC** in the **Codeoba** repository for macOS and Windows.
 
 > [!NOTE]
 > **Open Security & Kerckhoffs's Principle ("The Enemy Knows the System")**
@@ -84,7 +84,7 @@ The desktop build pipeline integrates macOS code signing and Apple notarization 
 To authenticate and sign, configure these parameters in your GitHub Repository settings:
 
 #### Secrets (Sensitive)
-https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/settings/secrets/actions:
+https://github.com/LookAtWhatAiCanDo/Codeoba/settings/secrets/actions:
 | Secret Name | Description |
 | :--- | :--- |
 | `MACOS_CERTIFICATE_P12` | Base64-encoded string of the `developerID_application-WhatAiCanDo.p12` file (for `.app` / `.dmg` signing). |
@@ -104,7 +104,7 @@ https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/settings/secrets/actions:
 >    Do not use your primary Apple ID login password, as it will fail due to 2FA.
 
 #### Variables (Non-Sensitive)
-https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/settings/variables/actions:
+https://github.com/LookAtWhatAiCanDo/Codeoba/settings/variables/actions:
 | Variable Name | Description |
 | :--- | :--- |
 | `APPLE_ID` | `<developer-email>` |
@@ -268,7 +268,7 @@ Follow these steps to set up keyless authentication (OIDC) between GitHub Action
 #### Step 2: Configure Federated Credentials (OIDC)
 Authorize your GitHub repository to authenticate securely:
 1. **Create the GitHub Environment:**
-   - In your `Codeoba-Tauri` GitHub Repository, go to **Settings** -> **Environments** -> **New environment**.
+   - In your `Codeoba` GitHub Repository, go to **Settings** -> **Environments** -> **New environment**.
    - Name the environment **`Production`** and click **Configure environment**.
 2. **Add Federated Credential in Azure:**
    - In the Entra signing client App Registration, select **Certificates & secrets** in the left menu.
@@ -276,7 +276,7 @@ Authorize your GitHub repository to authenticate securely:
    - Select the scenario: **`GitHub Actions active on a repository`**.
    - Fill in your repository details:
      * **Organization:** Enter `LookAtWhatAiCanDo`.
-     * **Repository:** Enter the repository name (`Codeoba-Tauri`).
+     * **Repository:** Enter the repository name (`Codeoba`).
      * **Entity type:** Select **`Environment`**.
      * **Environment:** Enter **`Production`**.
      * **Name:** Enter a descriptive identifier (e.g., `GitHub-LookAtWhatAiCanDo-CodeobaTauri-Environment-Production`).
@@ -353,7 +353,7 @@ During workflow execution on the `windows-latest` runner when a release tag is p
 
 ## Linux Setup (GPG Signing & Distribution)
 
-To establish trust for Linux users, Codeoba-Tauri supports two primary distribution paths:
+To establish trust for Linux users, Codeoba supports two primary distribution paths:
 1. **Direct Verifiable Downloads (Signed `.deb` packages)**: The generated Debian package (`.deb`) is signed using a GPG private key in the CI/CD pipeline via `dpkg-sig`.
 2. **Universal Sandboxed App Store (Flathub / Flatpak)**: Distributed on Flathub, which builds/wraps the application and signs it using Flathub's trusted GPG key.
 
@@ -388,7 +388,7 @@ Export the private key as an ASCII-armored string, base64-encode it, and copy it
 gpg --armor --export-secret-keys publish@whataicando.com | base64 | pbcopy
 ```
 
-Configure these secrets under **Settings -> Secrets and variables -> Actions** in the `Codeoba-Tauri` GitHub Repository:
+Configure these secrets under **Settings -> Secrets and variables -> Actions** in the `Codeoba` GitHub Repository:
 
 | Secret Name | Description |
 | :--- | :--- |
@@ -418,7 +418,7 @@ To verify a signed `.deb` file on a Linux machine:
      ```
    - Run verification:
      ```bash
-     dpkg-sig --verify codeoba-tauri_0.1.4_amd64.deb
+     dpkg-sig --verify codeoba_0.1.4_amd64.deb
      ```
    *Expected output: A valid signature line indicating it was signed by `builder` with your key.*
 
@@ -616,7 +616,7 @@ To safely test the auto-update process without cluttering GitHub or hitting CDN 
 ### 3. Dynamic Resolving Staging Endpoint
 - **Concept**: By default, the update check endpoint fetches a static `latest.json` manifest from the latest GitHub release. However, dev/staging clients need to test updates without affecting the static production `latest.json`.
 - **How it works**: When the environment variable `CODEOBA_TAURI_LATEST_JSON_URL` is set to `"DYNAMIC_DEV"`, the backend Cloud Function (`checkLatestReleaseTauri`) intercepts the request and:
-  1. Queries the GitHub Releases API: `https://api.github.com/repos/LookAtWhatAiCanDo/Codeoba-Tauri/releases`.
+  1. Queries the GitHub Releases API: `https://api.github.com/repos/LookAtWhatAiCanDo/Codeoba/releases`.
   2. Scans the list for the most recent pre-release matching the dev version pattern `v*-*` (e.g., `v0.1.0-124`).
   3. Locates the `latest.json` asset uploaded specifically to that dev pre-release.
   4. Returns the contents of that specific dev manifest to the client.
@@ -644,7 +644,7 @@ To configure the deployed staging Cloud Function, set the environment variable u
 
 ##### C. Production Cloud Function (codeoba-prod)
 Do **NOT** set the `CODEOBA_TAURI_LATEST_JSON_URL` variable in your production environment. 
-* Leave this variable **unset** (it will automatically default to the production GitHub release URL: `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/latest/download/latest.json`).
+* Leave this variable **unset** (it will automatically default to the production GitHub release URL: `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/latest/download/latest.json`).
 
 #### 🔐 Setting up the GITHUB_TOKEN Secret to Avoid Rate Limits
 To prevent hitting GitHub's unauthenticated API rate limits (which can cause staging update checks to fail on shared Google Cloud IPs), you must configure a read-only **GitHub Personal Access Token (PAT)** as a secret in your staging project. This isolates the rate limit to your token and raises it to 5,000 requests/hour.
@@ -653,7 +653,7 @@ To prevent hitting GitHub's unauthenticated API rate limits (which can cause sta
 1. Log into GitHub, go to your profile photo -> **Settings** -> **Developer settings** -> **Personal access tokens** -> **Fine-grained tokens**.
 2. Click **Generate new token**.
 3. Name it (e.g. `dev.codeoba.com Updater Token`).
-4. Set **Repository access** to **Only select repositories** -> Select `LookAtWhatAiCanDo/Codeoba-Tauri`.
+4. Set **Repository access** to **Only select repositories** -> Select `LookAtWhatAiCanDo/Codeoba`.
 5. Under **Permissions** -> **Repository permissions**, grant **Metadata** -> `Read-only` (this is the minimum scope required to read public releases).
 6. Click **Generate token** and copy it.
 

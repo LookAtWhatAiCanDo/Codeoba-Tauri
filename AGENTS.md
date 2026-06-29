@@ -1,4 +1,4 @@
-# Codeoba-Tauri Agent Instructions
+# Codeoba Agent Instructions
 
 Welcome! You are an AI coding assistant working on the Tauri migration of **Codeoba**—a platform-agnostic, zero-external-dependency, 100% local search application that indexes, monitors, and searches conversation transcripts across Claude Code, Google Antigravity, Cursor, OpenAI Codex, Aider, and GitHub Copilot.
 

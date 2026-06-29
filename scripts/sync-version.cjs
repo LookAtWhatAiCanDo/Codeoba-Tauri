@@ -147,3 +147,19 @@ if (fs.existsSync(cargoPath)) {
     console.warn('Could not find package version in Cargo.toml');
   }
 }
+
+// 5. Update packaging/com.whataicando.codeoba.yaml
+const flatpakPath = path.join(__dirname, '../packaging/com.whataicando.codeoba.yaml');
+if (fs.existsSync(flatpakPath)) {
+  let content = fs.readFileSync(flatpakPath, 'utf8');
+  content = content.replace(
+    /(path:\s+.*\/codeoba_)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(_amd64\.deb)/g,
+    `$1${version}$2`
+  );
+  content = content.replace(
+    /(url:\s+.*\/download\/v)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(\/codeoba_)\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?(_amd64\.deb)/g,
+    `$1${version}$2${version}$3`
+  );
+  fs.writeFileSync(flatpakPath, content);
+  console.log(`Updated packaging/com.whataicando.codeoba.yaml version to ${version}`);
+}

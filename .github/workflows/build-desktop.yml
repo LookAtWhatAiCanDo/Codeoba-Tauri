@@ -381,7 +381,7 @@ jobs:
         if: matrix.platform == 'macos' && hashFiles(format('src-tauri/target/{0}/release/bundle/macos/*.pkg', matrix.target)) != ''
         uses: actions/upload-artifact@v7
         with:
-          name: Codeoba-Tauri-macos-pkg
+          name: Codeoba-macos-pkg
           path: ${{ matrix.artifact-path-pkg }}
           retention-days: 7
 

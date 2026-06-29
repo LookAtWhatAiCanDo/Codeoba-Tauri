@@ -62,7 +62,7 @@ const macApp = findFilePair('.app.tar.gz');
 if (macApp && macApp.sigFile) {
   const filename = path.basename(macApp.file);
   const signature = fs.readFileSync(macApp.sigFile, 'utf8').trim();
-  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/${releaseTag}/${filename}`;
+  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/${releaseTag}/${filename}`;
   
   mergedManifest.platforms['darwin-aarch64'] = { signature, url };
   mergedManifest.platforms['darwin-x86_64'] = { signature, url };
@@ -76,7 +76,7 @@ const winX64 = findFilePair('.msi', 'x64');
 if (winX64 && winX64.sigFile) {
   const filename = path.basename(winX64.file);
   const signature = fs.readFileSync(winX64.sigFile, 'utf8').trim();
-  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/${releaseTag}/${filename}`;
+  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/${releaseTag}/${filename}`;
   
   mergedManifest.platforms['windows-x86_64'] = { signature, url };
   console.log(`✅ Added Windows x64 (windows-x86_64) update target: ${filename}`);
@@ -89,7 +89,7 @@ const winArm64 = findFilePair('.msi', 'arm64');
 if (winArm64 && winArm64.sigFile) {
   const filename = path.basename(winArm64.file);
   const signature = fs.readFileSync(winArm64.sigFile, 'utf8').trim();
-  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/${releaseTag}/${filename}`;
+  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/${releaseTag}/${filename}`;
   
   mergedManifest.platforms['windows-aarch64'] = { signature, url };
   console.log(`✅ Added Windows arm64 (windows-aarch64) update target: ${filename}`);
@@ -102,7 +102,7 @@ const linuxX64 = findFilePair('.AppImage', 'x86_64') || findFilePair('.AppImage'
 if (linuxX64 && linuxX64.sigFile) {
   const filename = path.basename(linuxX64.file);
   const signature = fs.readFileSync(linuxX64.sigFile, 'utf8').trim();
-  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/${releaseTag}/${filename}`;
+  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/${releaseTag}/${filename}`;
   
   mergedManifest.platforms['linux-x86_64'] = { signature, url };
   console.log(`✅ Added Linux x64 (linux-x86_64) update target: ${filename}`);
@@ -112,7 +112,7 @@ const linuxArm64 = findFilePair('.AppImage', 'arm64') || findFilePair('.AppImage
 if (linuxArm64 && linuxArm64.sigFile) {
   const filename = path.basename(linuxArm64.file);
   const signature = fs.readFileSync(linuxArm64.sigFile, 'utf8').trim();
-  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba-Tauri/releases/download/${releaseTag}/${filename}`;
+  const url = `https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/${releaseTag}/${filename}`;
   
   mergedManifest.platforms['linux-aarch64'] = { signature, url };
   console.log(`✅ Added Linux arm64 (linux-aarch64) update target: ${filename}`);
