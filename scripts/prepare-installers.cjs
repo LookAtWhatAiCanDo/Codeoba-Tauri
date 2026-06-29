@@ -90,26 +90,12 @@ const patchNsis = (data) => {
 // 2. Prepare WiX
 const patchWix = (data) => {
   console.log('Applying WiX path overrides...');
-  const oldDirStr = '<Directory Id="$(var.PlatformProgramFilesFolder)" Name="PFiles">\r\n                <Directory Id="INSTALLDIR" Name="{{product_name}}"/>\r\n            </Directory>';
-  const oldDirStrUnix = '<Directory Id="$(var.PlatformProgramFilesFolder)" Name="PFiles">\n                <Directory Id="INSTALLDIR" Name="{{product_name}}"/>\n            </Directory>';
-  
-  const newDirStr = '<Directory Id="$(var.PlatformProgramFilesFolder)" Name="PFiles">\r\n                <Directory Id="ManufacturerDir" Name="{{manufacturer}}">\r\n                    <Directory Id="INSTALLDIR" Name="{{product_name}}"/>\r\n                </Directory>\r\n            </Directory>';
-  const newDirStrUnix = '<Directory Id="$(var.PlatformProgramFilesFolder)" Name="PFiles">\n                <Directory Id="ManufacturerDir" Name="{{manufacturer}}">\n                    <Directory Id="INSTALLDIR" Name="{{product_name}}"/>\n                </Directory>\n            </Directory>';
-
-  if (data.includes(oldDirStr)) {
-    data = data.replace(oldDirStr, newDirStr);
-  } else if (data.includes(oldDirStrUnix)) {
-    data = data.replace(oldDirStrUnix, newDirStrUnix);
-  } else {
-    // Fallback search
-    const oldFallback = '<Directory Id="INSTALLDIR" Name="{{product_name}}"/>';
-    const newFallback = '<Directory Id="ManufacturerDir" Name="{{manufacturer}}">\r\n                    <Directory Id="INSTALLDIR" Name="{{product_name}}"/>\r\n                </Directory>';
-    if (data.includes(oldFallback)) {
-      data = data.replace(oldFallback, newFallback);
-    } else {
-      throw new Error('Could not find directory structure to patch in the WiX template.');
-    }
+  const oldFallback = '<Directory Id="INSTALLDIR" Name="{{product_name}}"/>';
+  const newFallback = '<Directory Id="INSTALLDIR" Name="{{manufacturer}}\\{{product_name}}"/>';
+  if (!data.includes(oldFallback)) {
+    throw new Error('Could not find directory structure to patch in the WiX template.');
   }
+  data = data.replace(oldFallback, newFallback);
   return data;
 };
 
