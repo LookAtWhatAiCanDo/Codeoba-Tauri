@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "node scripts/prepare-nsis.cjs && npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -39,7 +39,12 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "windows": {
+      "nsis": {
+        "template": "nsis/installer.nsi"
+      }
+    }
   },
   "plugins": {
     "updater": {

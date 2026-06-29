@@ -15,6 +15,7 @@ To ensure the project context remains accurate:
 4. **Relative Pathing Requirement:** Always write file paths relative to the folder they are in (e.g., `./README.md` or `./src-tauri/`). Never document absolute file paths or paths outside of the repository.
 5. **Plan Synchronization:** Any time a CLI command, parameter, file path, or configuration flag changes or is corrected during implementation, you must immediately propagate that change to the local `implementation_plan.md` in the system app data directory.
 6. **Test Verification:** Before completing any task, code modifications, or refactoring, you MUST run all unit and integration tests locally (e.g., `npm run build`, `npm run test`, and `cargo test --manifest-path src-tauri/Cargo.toml` if Rust core code changes are made) to ensure all tests pass and no regressions are introduced.
+7. **Conventional Commits:** All commits MUST follow the Conventional Commits specification (https://www.conventionalcommits.org) using standard prefixes (e.g., `feat:`, `fix:`, `docs:`, `chore:`).
 
 ---
 
