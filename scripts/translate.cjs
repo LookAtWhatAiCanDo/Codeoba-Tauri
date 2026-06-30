@@ -58,7 +58,7 @@ async function reconcileBatch(batch, targetLang, attempt = 1) {
 
   const prompt = `You are a professional software localizer. You are reconciling differences in translation keys for target language "${targetName}" (code: "${targetLang}").
 
-We have two versions of translations:
+We have two versions of target translations:
 1. Version A (HEAD / Previous Commit): Generally high-quality, has correct capitalization and polite verb tones.
 2. Version B (Working Copy / LLM Draft): Updated by a script, corrects typos (like changing "Codeova" to "Codeoba") and translates missing words, but sometimes introduces incorrect capitalization or informal verb tones.
 
@@ -69,13 +69,17 @@ Reconciliation Guidelines:
 4. Variable Safety: Placeholder variables (like "{count}", "{version}", "{progress}", "{error}") must match the English source exactly and remain completely untranslated and unmodified.
 5. Choose the translation that is more natural, concise, and standard for modern software UI.
 6. If Version A and Version B are both empty (or missing), this is a brand new key. Translate the English original directly using the capitalization and formality guidelines above.
+7. Use the "references" object (which contains existing translations for this key in other languages) to help understand context, resolve ambiguities (e.g., parts of speech, noun vs. verb, register), and ensure consistency across locales.
 
 Input JSON format:
 {
   "key.path": {
     "english": "English Original",
     "versionA": "HEAD translation",
-    "versionB": "Working Copy translation"
+    "versionB": "Working Copy translation",
+    "references": {
+      "lang_code": "Existing translation in other language"
+    }
   }
 }
 
@@ -154,6 +158,26 @@ async function run() {
     console.log("Starting translation reconciliation process...");
   }
 
+  // Pre-load HEAD versions of all target languages to use as references
+  console.log("Loading translation baselines from HEAD/files...");
+  const headFlats = {};
+  for (const lang of targetLanguages) {
+    const file = `${lang}.json`;
+    const filePath = path.join(localesDir, file);
+    let headJson = {};
+    try {
+      const headContent = execSync(`git show HEAD:src/i18n/locales/${file}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
+      headJson = JSON.parse(headContent);
+    } catch (err) {
+      if (fs.existsSync(filePath)) {
+        try {
+          headJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        } catch (_) {}
+      }
+    }
+    headFlats[lang] = getFlatKeys(headJson);
+  }
+
   for (const lang of targetLanguages) {
     const file = `${lang}.json`;
     const filePath = path.join(localesDir, file);
@@ -166,16 +190,8 @@ async function run() {
     const workingJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const workingFlat = getFlatKeys(workingJson);
 
-    // Get HEAD version of the same file
-    let headJson = {};
-    try {
-      const headContent = execSync(`git show HEAD:src/i18n/locales/${file}`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
-      headJson = JSON.parse(headContent);
-    } catch (err) {
-      console.warn(`  Warning: Failed to fetch HEAD version of ${file}. Using working copy as base.`);
-      headJson = JSON.parse(JSON.stringify(workingJson));
-    }
-    const headFlat = getFlatKeys(headJson);
+    // Get pre-loaded baseline version
+    const headFlat = headFlats[lang] || {};
 
     // Find difference between HEAD and working copy, or completely missing translations
     const diffKeys = [];
@@ -188,10 +204,23 @@ async function run() {
       // If they differ, or if the working copy is missing/empty, we must process it
       if (headVal !== workVal || !workVal) {
         diffKeys.push(key);
+
+        // Gather references from other languages (only where they exist and aren't empty)
+        const referenceTranslations = {};
+        for (const otherLang of targetLanguages) {
+          if (otherLang !== lang) {
+            const refVal = headFlats[otherLang]?.[key] || '';
+            if (refVal) {
+              referenceTranslations[otherLang] = refVal;
+            }
+          }
+        }
+
         payload[key] = {
           english: enFlat[key],
           versionA: headVal,
-          versionB: workVal
+          versionB: workVal,
+          ...(Object.keys(referenceTranslations).length > 0 ? { references: referenceTranslations } : {})
         };
       }
     }
