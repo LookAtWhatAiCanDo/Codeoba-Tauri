@@ -113,7 +113,13 @@
       "modeCompact": "Compactação total",
       "modeCompactDesc": "Analisar e estruturar blocos de contexto compactados.",
       "language": "Idioma do aplicativo",
-      "languageDesc": "Escolha o idioma de exibição da interface."
+      "languageDesc": "Escolha o idioma de exibição da interface.",
+      "dateFormat": "Formato da data",
+      "dateFormatDesc": "Selecione o formato de exibição para datas absolutas.",
+      "numberFormat": "Formato do número",
+      "numberFormatDesc": "Selecione como números grandes e métricas são formatados.",
+      "secureStorage": "Armazenamento seguro",
+      "secureStorageDesc": "Use o chaveiro seguro do sistema (Keyring) para credenciais."
     },
     "sources": {
       "tab": "Fontes",

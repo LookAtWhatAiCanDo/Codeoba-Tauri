@@ -113,7 +113,13 @@
       "modeCompact": "完整壓縮",
       "modeCompactDesc": "解析並建構已壓縮的上下文區塊。",
       "language": "應用程式語言",
-      "languageDesc": "選擇介面顯示語言。"
+      "languageDesc": "選擇介面顯示語言。",
+      "dateFormat": "日期格式",
+      "dateFormatDesc": "選取絕對日期的顯示格式。",
+      "numberFormat": "數字格式",
+      "numberFormatDesc": "選取大型數字和度量資料的格式。",
+      "secureStorage": "安全儲存區",
+      "secureStorageDesc": "使用系統安全金鑰鏈 (Keyring) 儲存憑證。"
     },
     "sources": {
       "tab": "來源",

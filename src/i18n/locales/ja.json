@@ -113,7 +113,13 @@
       "modeCompact": "完全コンパクション",
       "modeCompactDesc": "コンパクションされたコンテキストブロックを解析し、構造化します。",
       "language": "表示言語",
-      "languageDesc": "インターフェースの表示言語を選択します。"
+      "languageDesc": "インターフェースの表示言語を選択します。",
+      "dateFormat": "日付形式",
+      "dateFormatDesc": "絶対日付の表示形式を選択します。",
+      "numberFormat": "数値形式",
+      "numberFormatDesc": "大きな数値とメトリックの表示形式を選択します。",
+      "secureStorage": "セキュアストレージ",
+      "secureStorageDesc": "認証情報にシステムセキュアキーチェーン（Keyring）を使用します。"
     },
     "sources": {
       "tab": "ソース",

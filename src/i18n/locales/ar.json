@@ -113,7 +113,13 @@
       "modeCompact": "الضغط الكامل",
       "modeCompactDesc": "تحليل وهيكلة كتل السياق المضغوطة.",
       "language": "لغة التطبيق",
-      "languageDesc": "اختر لغة عرض واجهة المستخدم."
+      "languageDesc": "اختر لغة عرض واجهة المستخدم.",
+      "dateFormat": "تنسيق التاريخ",
+      "dateFormatDesc": "اختر تنسيق العرض للتواريخ المطلقة.",
+      "numberFormat": "تنسيق الأرقام",
+      "numberFormatDesc": "اختر كيفية تنسيق الأرقام الكبيرة والمقاييس.",
+      "secureStorage": "التخزين الآمن",
+      "secureStorageDesc": "استخدم سلسلة مفاتيح النظام الآمنة (Keyring) لبيانات الاعتماد."
     },
     "sources": {
       "tab": "المصادر",

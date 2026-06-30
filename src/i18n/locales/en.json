@@ -113,7 +113,13 @@
       "modeCompact": "Full Compaction",
       "modeCompactDesc": "Parse and structure compacted context blocks.",
       "language": "Application Language",
-      "languageDesc": "Choose the interface display language."
+      "languageDesc": "Choose the interface display language.",
+      "dateFormat": "Date Format",
+      "dateFormatDesc": "Select the display format for absolute dates.",
+      "numberFormat": "Number Format",
+      "numberFormatDesc": "Select how large numbers and metrics are formatted.",
+      "secureStorage": "Secure Storage",
+      "secureStorageDesc": "Use system secure keychain (Keyring) for credentials."
     },
     "sources": {
       "tab": "Sources",

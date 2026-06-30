@@ -113,7 +113,13 @@
       "modeCompact": "Vollständige Komprimierung",
       "modeCompactDesc": "Komprimierte Kontextblöcke parsen und strukturieren.",
       "language": "Anwendungssprache",
-      "languageDesc": "Wählen Sie die Anzeigesprache der Benutzeroberfläche."
+      "languageDesc": "Wählen Sie die Anzeigesprache der Benutzeroberfläche.",
+      "dateFormat": "Datumsformat",
+      "dateFormatDesc": "Wählen Sie das Anzeigeformat für absolute Daten.",
+      "numberFormat": "Zahlenformat",
+      "numberFormatDesc": "Wählen Sie, wie große Zahlen und Metriken formatiert werden sollen.",
+      "secureStorage": "Sicherer Speicher",
+      "secureStorageDesc": "Verwenden Sie den sicheren Systemspeicher (Schlüsselbund) für Anmeldeinformationen."
     },
     "sources": {
       "tab": "Quellen",

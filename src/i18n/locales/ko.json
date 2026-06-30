@@ -113,7 +113,13 @@
       "modeCompact": "완전 압축",
       "modeCompactDesc": "압축된 컨텍스트 블록을 파싱하고 구조화합니다.",
       "language": "애플리케이션 언어",
-      "languageDesc": "사용자 인터페이스 언어를 선택하세요."
+      "languageDesc": "사용자 인터페이스 언어를 선택하세요.",
+      "dateFormat": "날짜 형식",
+      "dateFormatDesc": "절대 날짜의 표시 형식을 선택합니다.",
+      "numberFormat": "숫자 형식",
+      "numberFormatDesc": "큰 숫자와 지표가 어떻게 서식 지정되는지 선택합니다.",
+      "secureStorage": "보안 저장소",
+      "secureStorageDesc": "자격 증명을 위해 시스템 보안 키체인(키링)을 사용합니다."
     },
     "sources": {
       "tab": "소스",

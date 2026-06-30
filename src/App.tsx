@@ -78,6 +78,18 @@ function App() {
   const [similarityThreshold, setSimilarityThreshold] = createSignal(
     parseFloat(localStorage.getItem("codeoba-similarity-threshold") || "0.35")
   );
+  const [dateFormat, setDateFormat] = createSignal(localStorage.getItem("codeoba-date-format") || "system");
+  const [numberFormat, setNumberFormat] = createSignal(localStorage.getItem("codeoba-number-format") || "system");
+
+  const handleDateFormatChange = (val: string) => {
+    setDateFormat(val);
+    localStorage.setItem("codeoba-date-format", val);
+  };
+
+  const handleNumberFormatChange = (val: string) => {
+    setNumberFormat(val);
+    localStorage.setItem("codeoba-number-format", val);
+  };
 
   // Auto-update states
   const [updateManifest, setUpdateManifest] = createSignal<any>(null);
@@ -701,6 +713,8 @@ function App() {
           onWidthChange={setSidebarWidth}
           collapsed={sidebarCollapsed()}
           appVersion={appVersion()}
+          dateFormat={dateFormat()}
+          numberFormat={numberFormat()}
         />
 
         <div class="flex-grow h-full flex flex-col min-w-0 overflow-hidden">
@@ -727,7 +741,7 @@ function App() {
               </div>
             }
           >
-            <Show when={selectedSession()} fallback={<Dashboard sessions={filteredSessions()} />}>
+            <Show when={selectedSession()} fallback={<Dashboard sessions={filteredSessions()} numberFormat={numberFormat()} />}>
               <DetailPane
                 session={selectedSession()}
                 onCopyPath={handleCopyPath}
@@ -735,6 +749,8 @@ function App() {
                 isLoading={loadingSessionId() !== null}
                 sidebarCollapsed={sidebarCollapsed()}
                 searchQuery={searchQuery()}
+                dateFormat={dateFormat()}
+                numberFormat={numberFormat()}
               />
             </Show>
           </Show>
@@ -753,6 +769,10 @@ function App() {
         }}
         similarityThreshold={similarityThreshold()}
         onSimilarityThresholdChange={setSimilarityThreshold}
+        dateFormat={dateFormat()}
+        onDateFormatChange={handleDateFormatChange}
+        numberFormat={numberFormat()}
+        onNumberFormatChange={handleNumberFormatChange}
         onUpdateAvailable={(update) => {
           setUpdateManifest(update);
           setShowUpdateModal(true);

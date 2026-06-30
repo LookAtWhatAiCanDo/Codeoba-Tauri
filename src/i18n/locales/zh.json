@@ -113,7 +113,13 @@
       "modeCompact": "完整压缩",
       "modeCompactDesc": "解析并结构化压缩的上下文块。",
       "language": "界面语言",
-      "languageDesc": "选择界面显示语言。"
+      "languageDesc": "选择界面显示语言。",
+      "dateFormat": "日期格式",
+      "dateFormatDesc": "选择绝对日期的显示格式。",
+      "numberFormat": "数字格式",
+      "numberFormatDesc": "选择大数字和指标的格式化方式。",
+      "secureStorage": "安全存储",
+      "secureStorageDesc": "使用系统安全密钥链（Keyring）存储凭据。"
     },
     "sources": {
       "tab": "数据源",

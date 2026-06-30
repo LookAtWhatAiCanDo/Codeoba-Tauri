@@ -34,6 +34,10 @@ interface SettingsDialogProps {
   similarityThreshold?: number;
   onSimilarityThresholdChange?: (val: number) => void;
   onUpdateAvailable?: (update: any) => void;
+  dateFormat: string;
+  onDateFormatChange: (val: string) => void;
+  numberFormat?: string;
+  onNumberFormatChange: (val: string) => void;
 }
 
 type Category = "general" | "sources" | "semantic" | "permissions";
@@ -418,6 +422,42 @@ export const SettingsDialog = (props: SettingsDialogProps) => {
                         </option>
                       )}
                     </For>
+                  </select>
+                </div>
+
+                {/* Date Format Selector */}
+                <div class="bg-surface/30 border border-border/50 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-text-primary">{t("settings.general.dateFormat")}</h4>
+                    <p class="text-[10px] text-text-secondary/70">{t("settings.general.dateFormatDesc")}</p>
+                  </div>
+                  <select
+                    value={props.dateFormat}
+                    onChange={(e) => props.onDateFormatChange(e.currentTarget.value)}
+                    class="bg-background border border-border/80 rounded-xl px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent font-medium cursor-pointer"
+                  >
+                    <option value="system">System Default</option>
+                    <option value="iso">ISO Format (YYYY-MM-DD)</option>
+                    <option value="us">US Format (MM/DD/YYYY)</option>
+                    <option value="eu">EU Format (DD/MM/YYYY)</option>
+                  </select>
+                </div>
+
+                {/* Number Format Selector */}
+                <div class="bg-surface/30 border border-border/50 rounded-2xl p-4 flex items-center justify-between">
+                  <div>
+                    <h4 class="text-xs font-bold text-text-primary">{t("settings.general.numberFormat")}</h4>
+                    <p class="text-[10px] text-text-secondary/70">{t("settings.general.numberFormatDesc")}</p>
+                  </div>
+                  <select
+                    value={props.numberFormat}
+                    onChange={(e) => props.onNumberFormatChange(e.currentTarget.value)}
+                    class="bg-background border border-border/80 rounded-xl px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent font-medium cursor-pointer"
+                  >
+                    <option value="system">System Default</option>
+                    <option value="us">US Format (1,234,567.89)</option>
+                    <option value="eu">EU Format (1.234.567,89)</option>
+                    <option value="fr">Space Separated (1 234 567,89)</option>
                   </select>
                 </div>
 

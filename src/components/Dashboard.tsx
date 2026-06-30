@@ -1,5 +1,6 @@
 import { createSignal, createMemo, For, Show } from "solid-js";
 import { useI18n } from "../i18n/i18n";
+import { formatNumberWithSetting } from "../utils/format";
 import { 
   Folder, 
   MessageSquare, 
@@ -41,6 +42,7 @@ interface Session {
 
 interface DashboardProps {
   sessions: Session[];
+  numberFormat?: string;
 }
 
 interface ModelItemStats {
@@ -231,7 +233,7 @@ export const Dashboard = (props: DashboardProps) => {
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat().format(num);
+    return formatNumberWithSetting(num, props.numberFormat || "system");
   };
 
   return (

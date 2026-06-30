@@ -113,7 +113,13 @@
       "modeCompact": "Volledige compactie",
       "modeCompactDesc": "Gecompacteerde contextblokken parseren en structureren.",
       "language": "Applicatietaal",
-      "languageDesc": "Kies de weergavetaal van de interface."
+      "languageDesc": "Kies de weergavetaal van de interface.",
+      "dateFormat": "Datumformaat",
+      "dateFormatDesc": "Selecteer de weergave-indeling voor absolute datums.",
+      "numberFormat": "Getalformaat",
+      "numberFormatDesc": "Selecteer hoe grote getallen en statistieken worden geformatteerd.",
+      "secureStorage": "Beveiligde opslag",
+      "secureStorageDesc": "Gebruik de beveiligde systeemsleutelhanger (Keyring) voor inloggegevens."
     },
     "sources": {
       "tab": "Bronnen",

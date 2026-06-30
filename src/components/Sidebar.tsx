@@ -1,5 +1,6 @@
 import { createSignal, createMemo, For, Show } from "solid-js";
 import { useI18n } from "../i18n/i18n";
+import { formatDateWithSetting } from "../utils/format";
 import { 
   Search, 
   Sparkles, 
@@ -78,6 +79,8 @@ interface SidebarProps {
   onWidthChange: (w: number) => void;
   collapsed?: boolean;
   appVersion?: string;
+  dateFormat: string;
+  numberFormat: string;
 }
 
 export const getSessionComputeTimeMs = (session: Session): number => {
@@ -199,7 +202,7 @@ export const Sidebar = (props: SidebarProps) => {
     return found ? found.displayName : sourceId;
   };
 
-  // Helper to format timestamps to relative strings
+  // Helper to format timestamps to relative/absolute datetime strings
   const formatRelativeTime = (timestampMs: number) => {
     let time = timestampMs;
     const now = Date.now();
@@ -208,23 +211,33 @@ export const Sidebar = (props: SidebarProps) => {
       time *= 1000;
     }
 
-    const diff = now - time;
-    if (diff < 60000) return t("sidebar.justNow");
-    
-    const minutes = Math.floor(diff / 60000);
-    if (minutes < 60) return t("sidebar.minutesAgo", { count: minutes });
-    
-    const hours = Math.floor(diff / 3600000);
-    if (hours < 24) return t("sidebar.hoursAgo", { count: hours });
-    
-    const days = Math.floor(diff / 86400000);
-    if (days === 1) return t("sidebar.yesterday");
-    if (days < 7) return t("sidebar.daysAgo", { count: days });
+    const dateObj = new Date(time);
+    const timeStr = dateObj.toLocaleTimeString(undefined, { timeStyle: "short" });
 
-    return new Date(time).toLocaleDateString(undefined, { 
-      month: "short", 
-      day: "numeric" 
-    });
+    // Check if it's today
+    const nowObj = new Date(now);
+    const isToday = dateObj.getDate() === nowObj.getDate() &&
+                    dateObj.getMonth() === nowObj.getMonth() &&
+                    dateObj.getFullYear() === nowObj.getFullYear();
+
+    if (isToday) {
+      return timeStr;
+    }
+
+    // Check if it's yesterday
+    const yesterday = new Date(now - 86400000);
+    const isYesterday = dateObj.getDate() === yesterday.getDate() &&
+                        dateObj.getMonth() === yesterday.getMonth() &&
+                        dateObj.getFullYear() === yesterday.getFullYear();
+
+    if (isYesterday) {
+      return `${t("sidebar.yesterday") || "Yesterday"}, ${timeStr}`;
+    }
+
+    // Otherwise, show full date and time according to settings
+    const dateStr = formatDateWithSetting(dateObj, props.dateFormat || "system");
+
+    return `${dateStr}, ${timeStr}`;
   };
 
   // Extract a text snippet from a session's turns
@@ -523,6 +536,7 @@ const SessionCard = (props: SessionCardProps) => {
           {title()}
         </span>
         <div class="flex items-center gap-1.5 flex-shrink-0 pt-0.5">
+          <span class="text-[10px] text-text-secondary/50 font-normal mr-1">{props.relativeTime}</span>
           <Show when={props.isLoading}>
             <Loader2 class="w-3.5 h-3.5 text-accent animate-spin" />
           </Show>

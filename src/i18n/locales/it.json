@@ -113,7 +113,13 @@
       "modeCompact": "Compattazione completa",
       "modeCompactDesc": "Analizza e struttura i blocchi di contesto compattati.",
       "language": "Lingua applicazione",
-      "languageDesc": "Scegli la lingua di visualizzazione dell'interfaccia."
+      "languageDesc": "Scegli la lingua di visualizzazione dell'interfaccia.",
+      "dateFormat": "Formato data",
+      "dateFormatDesc": "Selezionare il formato di visualizzazione per le date assolute.",
+      "numberFormat": "Formato numeri",
+      "numberFormatDesc": "Selezionare come vengono formattati i numeri grandi e le metriche.",
+      "secureStorage": "Archiviazione sicura",
+      "secureStorageDesc": "Usare il portachiavi sicuro del sistema (Keyring) per le credenziali."
     },
     "sources": {
       "tab": "Sorgenti",

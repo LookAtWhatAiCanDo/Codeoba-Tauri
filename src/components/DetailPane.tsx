@@ -18,6 +18,7 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 import { useI18n } from "../i18n/i18n";
 import { logFE } from "../utils/logger";
 import { parseAssistantMessage, MessageToolPart } from "../utils/messageParser";
+import { formatDateWithSetting, formatNumberWithSetting } from "../utils/format";
 
 interface Turn {
   turnId: string;
@@ -49,6 +50,8 @@ interface DetailPaneProps {
   isLoading: boolean;
   sidebarCollapsed?: boolean;
   searchQuery?: string;
+  dateFormat?: string;
+  numberFormat?: string;
 }
 
 export const DetailPane = (props: DetailPaneProps) => {
@@ -151,10 +154,10 @@ export const DetailPane = (props: DetailPaneProps) => {
     if (time < 20000000000) {
       time *= 1000;
     }
-    return new Date(time).toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short"
-    });
+    const dateObj = new Date(time);
+    const dateStr = formatDateWithSetting(dateObj, props.dateFormat || "system");
+    const timeStr = dateObj.toLocaleTimeString(undefined, { timeStyle: "short" });
+    return `${dateStr}, ${timeStr}`;
   };
 
   const slicedTurns = createMemo(() => {
@@ -334,6 +337,7 @@ export const DetailPane = (props: DetailPaneProps) => {
                     getCachedHeight={getCachedHeight}
                     setCachedHeight={setCachedHeight}
                     searchQuery={props.searchQuery}
+                    numberFormat={props.numberFormat}
                   />
                 );
               }}
@@ -355,6 +359,7 @@ interface VirtualTurnProps {
   getCachedHeight: (turnId: string) => number | undefined;
   setCachedHeight: (turnId: string, h: number) => void;
   searchQuery?: string;
+  numberFormat?: string;
 }
 
 const VirtualTurn = (props: VirtualTurnProps) => {
@@ -448,9 +453,9 @@ const VirtualTurn = (props: VirtualTurnProps) => {
             </div>
             <Show when={props.turn.inputTokens || props.turn.outputTokens}>
               <div class="flex items-center gap-1.5 text-[10px] text-text-secondary/50 font-mono">
-                {props.turn.inputTokens && <span>in: {props.turn.inputTokens}</span>}
+                {props.turn.inputTokens && <span>in: {formatNumberWithSetting(props.turn.inputTokens, props.numberFormat || "system")}</span>}
                 {props.turn.inputTokens && props.turn.outputTokens && <span>•</span>}
-                {props.turn.outputTokens && <span>out: {props.turn.outputTokens}</span>}
+                {props.turn.outputTokens && <span>out: {formatNumberWithSetting(props.turn.outputTokens, props.numberFormat || "system")}</span>}
               </div>
             </Show>
           </div>
