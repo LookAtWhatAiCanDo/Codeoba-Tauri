@@ -130,4 +130,9 @@ import { logFE } from "./utils/logger";
       }
     }
   });
+
+  // Global event listener to disable the default browser right-click context menu (which has "Reload", "Back", etc.)
+  document.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
 })();
