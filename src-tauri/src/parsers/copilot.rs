@@ -391,6 +391,9 @@ impl SourceAdapter for CopilotSource {
         let first_time = events_list.first().map(|e| e.timestamp).unwrap_or(created_time);
         let last_time = events_list.last().map(|e| e.timestamp).unwrap_or(updated_time);
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), &session_id, &turns, &cwd);
+
         let session = Session {
             id: session_id,
             source_id: self.id().to_string(),
@@ -404,6 +407,8 @@ impl SourceAdapter for CopilotSource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         };
 
         crate::parsers::cache::get_cache_manager().put_cached_session(

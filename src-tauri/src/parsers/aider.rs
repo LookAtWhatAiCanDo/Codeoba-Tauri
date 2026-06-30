@@ -25,17 +25,24 @@ impl AiderSource {
 }
 
 fn get_base_dirs() -> Vec<PathBuf> {
-    let home = crate::parsers::get_home_dir();
-    let mut dirs = Vec::new();
-    let dev = home.join("Dev");
-    if dev.exists() && dev.is_dir() {
-        dirs.push(dev);
+    #[cfg(test)]
+    {
+        let home = crate::parsers::get_home_dir();
+        let mut dirs = Vec::new();
+        let dev = home.join("Dev");
+        if dev.exists() && dev.is_dir() {
+            dirs.push(dev);
+        }
+        let github = home.join("GitHub");
+        if github.exists() && github.is_dir() {
+            dirs.push(github);
+        }
+        dirs
     }
-    let github = home.join("GitHub");
-    if github.exists() && github.is_dir() {
-        dirs.push(github);
+    #[cfg(not(test))]
+    {
+        Vec::new()
     }
-    dirs
 }
 
 fn find_aider_files(dir: &Path, depth: usize, max_depth: usize, paths: &mut Vec<PathBuf>) {
@@ -72,7 +79,7 @@ impl SourceAdapter for AiderSource {
     }
 
     fn is_available(&self) -> bool {
-        self.is_app_installed() || !self.active_aider_paths.read().expect("Failed to lock active_aider_paths read lock").is_empty()
+        self.is_app_installed()
     }
 
     fn get_default_log_paths(&self) -> Vec<String> {
@@ -88,6 +95,10 @@ impl SourceAdapter for AiderSource {
     }
 
     fn is_app_installed(&self) -> bool {
+        let base_dirs = get_base_dirs();
+        if !base_dirs.is_empty() {
+            return true;
+        }
         if !self.active_aider_paths.read().expect("Failed to lock active_aider_paths read lock").is_empty() {
             return true;
         }
@@ -273,6 +284,9 @@ impl SourceAdapter for AiderSource {
         let project_name = path.parent().and_then(|p| p.file_name()).and_then(|s| s.to_str()).unwrap_or("Project");
         let thread_name = format!("{} (Aider)", project_name);
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), &session_id, &turns, &cwd);
+
         let session = Session {
             id: session_id,
             source_id: self.id().to_string(),
@@ -286,6 +300,8 @@ impl SourceAdapter for AiderSource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         };
 
         crate::parsers::cache::get_cache_manager().put_cached_session(

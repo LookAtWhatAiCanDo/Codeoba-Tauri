@@ -110,7 +110,12 @@ impl SourceAdapter for CodexSource {
     }
 
     fn get_watch_paths(&self) -> Vec<String> {
-        self.get_default_log_paths()
+        let base = self.get_base_dir();
+        vec![
+            base.join("session_index.jsonl").to_string_lossy().to_string(),
+            base.join("sessions").to_string_lossy().to_string(),
+            base.join("archived_sessions").to_string_lossy().to_string(),
+        ]
     }
 
     fn get_watch_file_filter(&self) -> Option<fn(&str) -> bool> {
@@ -362,6 +367,9 @@ impl SourceAdapter for CodexSource {
         
         let is_archived = path.parent().and_then(|p| p.file_name()).and_then(|s| s.to_str()) == Some("archived_sessions");
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), &session_id, &turns, &cwd);
+
         let session = Session {
             id: session_id,
             source_id: self.id().to_string(),
@@ -375,6 +383,8 @@ impl SourceAdapter for CodexSource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         };
 
         crate::parsers::cache::get_cache_manager().put_cached_session(

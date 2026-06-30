@@ -959,6 +959,8 @@ fn test_lexical_search_engine_filters() {
         is_pinned: false,
         summary: None,
         snippet: None,
+        workspace_name: Some("workspace".to_string()),
+        status: None,
     };
 
     let archived_session = crate::models::Session {
@@ -984,6 +986,8 @@ fn test_lexical_search_engine_filters() {
         is_pinned: false,
         summary: None,
         snippet: None,
+        workspace_name: Some("workspace".to_string()),
+        status: None,
     };
 
     let sessions = vec![active_session, archived_session];
@@ -1034,6 +1038,8 @@ fn test_semantic_search_engine_filters() {
         is_pinned: false,
         summary: None,
         snippet: None,
+        workspace_name: Some("workspace".to_string()),
+        status: None,
     };
 
     let archived_session = crate::models::Session {
@@ -1059,6 +1065,8 @@ fn test_semantic_search_engine_filters() {
         is_pinned: false,
         summary: None,
         snippet: None,
+        workspace_name: Some("workspace".to_string()),
+        status: None,
     };
 
     let sessions = vec![active_session, archived_session];

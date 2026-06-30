@@ -711,6 +711,9 @@ impl SourceAdapter for AntigravitySource {
             false
         };
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), &session_id, &turns, &cwd);
+
         let session = Session {
             id: session_id.clone(),
             source_id: self.id().to_string(),
@@ -724,6 +727,8 @@ impl SourceAdapter for AntigravitySource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         };
 
         crate::parsers::cache::get_cache_manager().put_cached_session(

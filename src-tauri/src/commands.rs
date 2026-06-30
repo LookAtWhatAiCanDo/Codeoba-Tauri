@@ -33,7 +33,16 @@ pub async fn get_all_sessions<R: tauri::Runtime>(app_handle: tauri::AppHandle<R>
     let state = app_handle.state::<SearchIndexState>();
     let guard = state.sessions.read().map_err(|e| e.to_string())?;
     
-    let mut all_sessions: Vec<Session> = guard.values().map(|s| s.to_lightweight()).collect();
+    let mut all_sessions: Vec<Session> = guard.values().map(|s| {
+        let mut lightweight = s.to_lightweight();
+        if lightweight.workspace_name.is_none() && lightweight.cwd.is_some() {
+            lightweight.workspace_name = crate::models::resolve_workspace_name(&lightweight.cwd);
+        }
+        if lightweight.status.is_none() {
+            lightweight.status = crate::models::resolve_session_status(&lightweight.source_id, &lightweight.id, &lightweight.turns, &lightweight.cwd);
+        }
+        lightweight
+    }).collect();
     
     // Sort sessions by updated_at descending
     all_sessions.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
@@ -55,7 +64,13 @@ pub async fn get_session<R: tauri::Runtime>(
         guard.values().find(|s| s.source_id == source_id && s.file_path == file_path).cloned()
     };
 
-    if let Some(session) = in_memory_cached {
+    if let Some(mut session) = in_memory_cached {
+        if session.workspace_name.is_none() && session.cwd.is_some() {
+            session.workspace_name = crate::models::resolve_workspace_name(&session.cwd);
+        }
+        if session.status.is_none() {
+            session.status = crate::models::resolve_session_status(&session.source_id, &session.id, &session.turns, &session.cwd);
+        }
         let elapsed = start_time.elapsed();
         crate::log_info!(
             "[IPC] get_session: Completed in {:?} (loaded from SearchIndexState cache, turns: {})",
@@ -85,7 +100,15 @@ pub async fn get_session<R: tauri::Runtime>(
                     crate::log_info!("[IPC] get_session: Completed in {:?} (failed to parse file)", elapsed);
                 }
             }
-            Ok(session_opt)
+            Ok(session_opt.map(|mut session| {
+                if session.workspace_name.is_none() && session.cwd.is_some() {
+                    session.workspace_name = crate::models::resolve_workspace_name(&session.cwd);
+                }
+                if session.status.is_none() {
+                    session.status = crate::models::resolve_session_status(&session.source_id, &session.id, &session.turns, &session.cwd);
+                }
+                session
+            }))
         }
         None => {
             let elapsed = start_time.elapsed();
@@ -175,7 +198,14 @@ pub async fn search_sessions<R: tauri::Runtime>(
 }
 
 #[tauri::command]
-pub async fn rebuild_index<R: tauri::Runtime>(app_handle: tauri::AppHandle<R>) -> Result<(), String> {
+pub async fn rebuild_index<R: tauri::Runtime>(
+    app_handle: tauri::AppHandle<R>,
+    bypass_cache: Option<bool>,
+) -> Result<(), String> {
+    if bypass_cache == Some(true) {
+        crate::log_info!("[IPC] rebuild_index: Bypassing and clearing cache!");
+        crate::parsers::cache::get_cache_manager().clear_all_caches();
+    }
     let state = app_handle.state::<SearchIndexState>();
     state.rebuild(true, Some(app_handle.clone())).await
 }

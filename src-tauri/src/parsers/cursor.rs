@@ -264,6 +264,9 @@ impl CursorSource {
             map.get(composer_id).cloned()
         };
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), composer_id, &turns, &cwd);
+
         Some(Session {
             id: composer_id.to_string(),
             source_id: self.id().to_string(),
@@ -277,6 +280,8 @@ impl CursorSource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         })
     }
 }

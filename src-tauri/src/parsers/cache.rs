@@ -20,7 +20,7 @@ pub struct CacheEntry {
     pub session: Session,
 }
 
-const CURRENT_CACHE_VERSION: &str = "v1";
+const CURRENT_CACHE_VERSION: &str = "v6";
 
 fn default_cache_version() -> String {
     "v0".to_string()
@@ -58,6 +58,24 @@ fn get_or_create_cache_key() -> [u8; 32] {
 }
 
 impl SessionCacheManager {
+    pub fn clear_all_caches(&self) {
+        if let Ok(mut active_guard) = self.active_caches.lock() {
+            active_guard.clear();
+        }
+        if let Ok(mut seen_guard) = self.seen_paths.lock() {
+            seen_guard.clear();
+        }
+        let dir = self.get_cache_dir();
+        if let Ok(entries) = fs::read_dir(dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_file() {
+                    let _ = fs::remove_file(&path);
+                }
+            }
+        }
+    }
+
     fn get_cache_dir(&self) -> PathBuf {
         let home = crate::parsers::get_home_dir();
         let dir = home.join(".codeoba/cache");
