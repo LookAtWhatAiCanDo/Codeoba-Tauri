@@ -400,7 +400,37 @@ impl SourceAdapter for AntigravitySource {
             cache_modified,
             cache_size,
         ) {
-            cached.thread_name = Some(self.get_session_title(&session_id));
+            let current_title = self.get_session_title(&session_id);
+            let annotation_file = home.join(format!(".gemini/antigravity/annotations/{}.pbtxt", session_id));
+            let current_archived = if annotation_file.exists() && annotation_file.is_file() {
+                if let Ok(anno_text) = fs::read_to_string(&annotation_file) {
+                    let normalized: String = anno_text.chars().filter(|c| !c.is_whitespace()).collect();
+                    normalized.contains("archived:true")
+                } else {
+                    false
+                }
+            } else {
+                false
+            };
+
+            let title_changed = cached.thread_name.as_deref() != Some(current_title.as_str());
+            let archived_changed = cached.is_archived != current_archived;
+
+            if title_changed || archived_changed {
+                cached.thread_name = Some(current_title);
+                cached.is_archived = current_archived;
+                crate::parsers::cache::get_cache_manager().put_cached_session(
+                    self.id(),
+                    file_path,
+                    cache_modified,
+                    cache_size,
+                    "",
+                    cached.clone(),
+                );
+            } else {
+                cached.thread_name = Some(current_title);
+                cached.is_archived = current_archived;
+            }
             return Some(cached);
         }
 

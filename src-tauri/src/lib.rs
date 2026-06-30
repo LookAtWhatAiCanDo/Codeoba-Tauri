@@ -118,6 +118,7 @@ pub fn run() {
         .manage(watcher::WatcherState {
             watcher: std::sync::Mutex::new(None),
             last_generations: std::sync::Mutex::new(std::collections::HashMap::new()),
+            watched_inodes: std::sync::Mutex::new(std::collections::HashMap::new()),
         })
         .manage(search::SearchIndexState::new())
         .setup(|app| {

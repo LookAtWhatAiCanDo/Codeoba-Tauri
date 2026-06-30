@@ -29,14 +29,10 @@ impl SourceAdapter for ClaudeSource {
     fn is_available(&self) -> bool {
         let base_dir = self.get_base_dir();
         if base_dir.exists() && base_dir.is_dir() {
-            if let Ok(entries) = fs::read_dir(&base_dir) {
-                for entry in entries.flatten() {
-                    if entry.file_type().map(|t| t.is_file()).unwrap_or(false)
-                        && entry.path().extension().and_then(|s| s.to_str()) == Some("jsonl")
-                    {
-                        return true;
-                    }
-                }
+            let mut paths = Vec::new();
+            self.find_jsonl_files(&base_dir, 1, 3, &mut paths);
+            if !paths.is_empty() {
+                return true;
             }
         }
         self.is_app_installed()
@@ -57,14 +53,10 @@ impl SourceAdapter for ClaudeSource {
     fn is_app_installed(&self) -> bool {
         let base_dir = self.get_base_dir();
         if base_dir.exists() && base_dir.is_dir() {
-            if let Ok(entries) = fs::read_dir(&base_dir) {
-                for entry in entries.flatten() {
-                    if entry.file_type().map(|t| t.is_file()).unwrap_or(false)
-                        && entry.path().extension().and_then(|s| s.to_str()) == Some("jsonl")
-                    {
-                        return true;
-                    }
-                }
+            let mut paths = Vec::new();
+            self.find_jsonl_files(&base_dir, 1, 3, &mut paths);
+            if !paths.is_empty() {
+                return true;
             }
         }
         is_executable_installed("claude")
@@ -82,16 +74,13 @@ impl SourceAdapter for ClaudeSource {
 
         crate::parsers::cache::get_cache_manager().start_scan(self.id());
 
+        let mut paths = Vec::new();
+        self.find_jsonl_files(&base_dir, 1, 3, &mut paths);
+
         let mut sessions = Vec::new();
-        if let Ok(entries) = fs::read_dir(&base_dir) {
-            for entry in entries.flatten() {
-                if entry.file_type().map(|t| t.is_file()).unwrap_or(false)
-                    && entry.path().extension().and_then(|s| s.to_str()) == Some("jsonl")
-                {
-                    if let Some(session) = self.parse_session(&entry.path().to_string_lossy()).await {
-                        sessions.push(session);
-                    }
-                }
+        for path in paths {
+            if let Some(session) = self.parse_session(&path.to_string_lossy()).await {
+                sessions.push(session);
             }
         }
 
@@ -102,6 +91,24 @@ impl SourceAdapter for ClaudeSource {
 }
 
 impl ClaudeSource {
+    fn find_jsonl_files(&self, dir: &Path, depth: usize, max_depth: usize, paths: &mut Vec<PathBuf>) {
+        if depth > max_depth {
+            return;
+        }
+        if let Ok(entries) = fs::read_dir(dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    self.find_jsonl_files(&path, depth + 1, max_depth, paths);
+                } else if path.is_file() {
+                    if path.extension().and_then(|s| s.to_str()) == Some("jsonl") {
+                        paths.push(path);
+                    }
+                }
+            }
+        }
+    }
+
     fn get_base_dir(&self) -> PathBuf {
         let home = crate::parsers::get_home_dir();
         home.join(".claude/projects")
@@ -166,10 +173,25 @@ impl ClaudeSource {
 
                     if line_type == "user" {
                         if let Some(msg_obj) = obj.get("message").and_then(|v| v.as_object()) {
-                            let content = msg_obj.get("content").and_then(|v| v.as_str()).unwrap_or("");
+                            let mut text = String::new();
+                            if let Some(c_str) = msg_obj.get("content").and_then(|v| v.as_str()) {
+                                text.push_str(c_str);
+                            } else if let Some(content_array) = msg_obj.get("content").and_then(|v| v.as_array()) {
+                                for item in content_array {
+                                    if let Some(item_obj) = item.as_object() {
+                                        if item_obj.get("type").and_then(|v| v.as_str()) == Some("text") {
+                                            if let Some(t) = item_obj.get("text").and_then(|v| v.as_str()) {
+                                                text.push_str(t);
+                                                text.push('\n');
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            let text_trimmed = text.trim().to_string();
                             raw_turns.push(RawTurn {
                                 is_user: true,
-                                text: content.to_string(),
+                                text: text_trimmed,
                                 timestamp,
                                 model: None,
                                 is_compaction: false,
@@ -351,6 +373,9 @@ impl ClaudeSource {
             "Claude Session".to_string()
         };
 
+        let workspace_name = crate::models::resolve_workspace_name(&cwd);
+        let status = crate::models::resolve_session_status(self.id(), &session_id, &turns, &cwd);
+
         let session = Session {
             id: session_id,
             source_id: self.id().to_string(),
@@ -364,6 +389,8 @@ impl ClaudeSource {
             is_pinned: false,
             summary: None,
             snippet: None,
+            workspace_name,
+            status,
         };
 
         crate::parsers::cache::get_cache_manager().put_cached_session(
