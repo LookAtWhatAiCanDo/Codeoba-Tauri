@@ -103,6 +103,9 @@ pub fn is_executable_installed(binary_name: &str) -> bool {
 /// Returns the user's home directory. Checks the `HOME` (or `USERPROFILE` on Windows) environment
 /// variables first for mocking support, falling back to `dirs::home_dir()`.
 pub fn get_home_dir() -> std::path::PathBuf {
+    if let Ok(mock_home) = env::var("CODEOBA_MOCK_HOME") {
+        return std::path::PathBuf::from(mock_home);
+    }
     if let Ok(home) = env::var("HOME") {
         return std::path::PathBuf::from(home);
     }

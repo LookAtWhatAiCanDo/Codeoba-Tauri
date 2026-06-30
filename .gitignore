@@ -29,12 +29,11 @@ secrets/
 src-tauri/*.key
 src-tauri/*.key.pub
 
-scratch/
-
 # Dynamically generated Tauri NSIS template
 src-tauri/nsis/installer.nsi
 src-tauri/main.wxs
 
+demo_mock/
+scratch/
 src/i18n/locales.bak/
-
 *.code-workspace
