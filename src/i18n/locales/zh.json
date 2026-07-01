@@ -151,10 +151,10 @@
       "confirmDeleteSource": "您确定要清除 {source} 的 Codeoba 本地搜索索引和缓存会话吗？这会将其从搜索结果中移除，但绝不会删除或影响您实际的智能体应用程序、对话或日志文件。",
       "detectedMultiPromptTitle": "启用本地搜索",
       "detectedMultiPromptBadge": "100% 本地与隐私",
-      "detectedMultiPromptMessage": "Codeoba 在您的系统上找到了以下智能体对话历史。请选择您想要建立索引的应用。数据绝不会离开您的电脑：",
+      "detectedMultiPromptMessage": "Codeoba 在您的系统中找到了以下代理聊天记录。请选择您想要索引的应用。任何对话数据都不会离开您的电脑：",
       "detectedMultiPromptDenyAll": "稍后配置",
       "detectedMultiPromptAllowSelected": "启用所选应用",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% 隐私保护：所有搜索解析和索引构建完全在您的设备上离线完成。",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% 隐私保护：所有搜索解析和索引构建完全在您的设备上离线完成。可选的云端功能（如更新检查）仅向我们的后端传输必要的元数据。",
       "detectedMultiPromptFootnoteEmpty": "🔍 必要条件：如果您不授权任何来源，搜索结果将保持为空。"
     },
     "semantic": {

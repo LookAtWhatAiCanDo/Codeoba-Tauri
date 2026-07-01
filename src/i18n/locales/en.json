@@ -156,10 +156,10 @@
       "confirmDeleteSource": "Are you sure you want to clear Codeoba's local search index and cached sessions for {source}? This will remove it from search results, but will NOT delete or affect your actual agent application, conversations, or log files.",
       "detectedMultiPromptTitle": "Enable Local Search",
       "detectedMultiPromptBadge": "100% LOCAL & PRIVATE",
-      "detectedMultiPromptMessage": "Codeoba found the following agent chat histories on your system. Select which apps you want to index. No data ever leaves your computer:",
+      "detectedMultiPromptMessage": "Codeoba found the following agent chat histories on your system. Select which apps you want to index. No conversation data ever leaves your computer:",
       "detectedMultiPromptDenyAll": "Configure Later",
       "detectedMultiPromptAllowSelected": "Enable Selected Applications",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% Private: All search parsing and index builds happen completely offline on your device.",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% Private: All search parsing and index builds happen completely offline on your device. Optional cloud features (such as update checks) communicate only necessary metadata to our backend.",
       "detectedMultiPromptFootnoteEmpty": "🔍 Required: If you do not authorize any sources, search results will remain empty."
     },
     "semantic": {

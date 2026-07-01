@@ -151,10 +151,10 @@
       "confirmDeleteSource": "Weet u zeker dat u de lokale zoekindex en gecachte sessies van Codeoba voor {source} wilt wissen? Dit verwijdert het uit de zoekresultaten, maar zal uw werkelijke agenten-applicatie, gesprekken of logbestanden NIET verwijderen of beïnvloeden.",
       "detectedMultiPromptTitle": "Lokale zoekopdracht inschakelen",
       "detectedMultiPromptBadge": "100% LOKAAL & PRIVÉ",
-      "detectedMultiPromptMessage": "Codeoba heeft de volgende chatgeschiedenis van agenten op uw systeem gevonden. Selecteer de apps die u wilt indexeren. Er worden geen gegevens van uw computer verzonden:",
+      "detectedMultiPromptMessage": "Codeoba heeft de volgende chatgeschiedenissen van agenten op uw systeem gevonden. Selecteer welke apps u wilt indexeren. Er worden geen gespreksgegevens van uw computer verzonden:",
       "detectedMultiPromptDenyAll": "Later configureren",
       "detectedMultiPromptAllowSelected": "Geselecteerde applicaties inschakelen",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% Privé: Alle zoekanalyses en indexopbouw vinden volledig offline plaats op uw apparaat.",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% Privé: Alle zoekanalyses en indexopbouw vinden volledig offline plaats op uw apparaat. Optionele cloudfuncties (zoals updatecontroles) communiceren alleen de benodigde metadata met onze backend,",
       "detectedMultiPromptFootnoteEmpty": "🔍 Vereist: Als u geen bronnen autoriseert, blijven de zoekresultaten leeg."
     },
     "semantic": {

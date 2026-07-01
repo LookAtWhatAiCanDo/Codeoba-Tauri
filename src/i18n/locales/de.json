@@ -151,10 +151,10 @@
       "confirmDeleteSource": "Sind Sie sicher, dass Sie den lokalen Suchindex und die zwischengespeicherten Sitzungen von Codeoba für {source} löschen möchten? Dies entfernt es aus den Suchergebnissen, löscht aber NICHT Ihre tatsächliche Agenten-Anwendung, Ihre Konversationen oder Ihre Protokolldateien und wirkt sich nicht darauf aus.",
       "detectedMultiPromptTitle": "Lokale Suche aktivieren",
       "detectedMultiPromptBadge": "100% LOKAL & PRIVAT",
-      "detectedMultiPromptMessage": "Codeoba hat die folgenden Agenten-Chat-Verläufe auf Ihrem System gefunden. Wählen Sie aus, welche Apps Sie indexieren möchten. Es verlassen keine Daten Ihren Computer:",
+      "detectedMultiPromptMessage": "Codeoba hat die folgenden Agenten-Chatverläufe auf Ihrem System gefunden. Wählen Sie aus, welche Apps Sie indexieren möchten. Es verlassen keine Konversationsdaten Ihren Computer:",
       "detectedMultiPromptDenyAll": "Später konfigurieren",
       "detectedMultiPromptAllowSelected": "Ausgewählte Anwendungen aktivieren",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% Privat: Alle Analysen und Indexerstellungen finden vollständig offline auf Ihrem Gerät statt.",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% Privat: Alle Analysen und Indexerstellungen finden vollständig offline auf Ihrem Gerät statt. Optionale Cloud-Funktionen (wie Update-Prüfungen) übertragen nur notwendige Metadaten an unser Backend,",
       "detectedMultiPromptFootnoteEmpty": "🔍 Erforderlich: Wenn Sie keine Quellen autorisieren, bleiben die Suchergebnisse leer."
     },
     "semantic": {

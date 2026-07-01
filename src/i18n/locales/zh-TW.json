@@ -151,10 +151,10 @@
       "confirmDeleteSource": "您確定要清除 {source} 的 Codeoba 本地搜尋索引和快取工作階段嗎？這會將其從搜尋結果中移除，但絕不會刪除或影響您實際的代理程式應用程式、對話或記錄檔案。",
       "detectedMultiPromptTitle": "啟用在地搜尋",
       "detectedMultiPromptBadge": "100% 在地與隱私",
-      "detectedMultiPromptMessage": "Codeoba 在您的系統上找到了以下代理程式對話歷史。請選擇您想要建立索引的應用程式。資料絕不會離開您的電腦：",
+      "detectedMultiPromptMessage": "Codeoba 在您的系統中找到了以下代理聊天記錄。請選擇您想要索引的應用。任何對話數據都會留在您的電腦上，不會傳送出去：",
       "detectedMultiPromptDenyAll": "稍後設定",
       "detectedMultiPromptAllowSelected": "啟用所選應用程式",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% 隱私保護：所有搜尋解析和索引建立完全在您的裝置上離線完成。",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% 隱私保護：所有搜尋解析與索引建立完全在您的裝置上離線完成。可選的雲端功能（如更新檢查）僅向我們的後端傳輸必要的元數據。",
       "detectedMultiPromptFootnoteEmpty": "🔍 必要條件：如果您不授權任何來源，搜尋結果將保持為空。"
     },
     "semantic": {

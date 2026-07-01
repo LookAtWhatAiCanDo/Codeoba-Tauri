@@ -615,7 +615,7 @@ To safely test the auto-update process without cluttering GitHub or hitting CDN 
 
 ### 3. Dynamic Resolving Staging Endpoint
 - **Concept**: By default, the update check endpoint fetches a static `latest.json` manifest from the latest GitHub release. However, dev/staging clients need to test updates without affecting the static production `latest.json`.
-- **How it works**: When the environment variable `CODEOBA_TAURI_LATEST_JSON_URL` is set to `"DYNAMIC_DEV"`, the backend Cloud Function (`checkLatestReleaseTauri`) intercepts the request and:
+- **How it works**: When the environment variable `CODEOBA_TAURI_LATEST_JSON_URL` is set to `"DYNAMIC_DEV"`, the backend Cloud Function (`checkLatestRelease`) intercepts the request and:
   1. Queries the GitHub Releases API: `https://api.github.com/repos/LookAtWhatAiCanDo/Codeoba/releases`.
   2. Scans the list for the most recent pre-release matching the dev version pattern `v*-*` (e.g., `v0.1.0-124`).
   3. Locates the `latest.json` asset uploaded specifically to that dev pre-release.
@@ -635,7 +635,7 @@ To test the dynamic resolution locally with the Firebase Emulator:
 ##### B. Deployed Staging Cloud Function (codeoba-dev)
 To configure the deployed staging Cloud Function, set the environment variable using the Google Cloud Console:
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and navigate to **Cloud Functions**.
-2. Select your `update` or `checkLatestReleaseTauri` function under the `codeoba-dev` project.
+2. Select your `update` or `checkLatestRelease` function under the `codeoba-dev` project.
 3. Click **Edit** -> Expand **Runtime, build, connections and security settings**.
 4. Under the **Runtime environment variables** section, add a new variable:
    * **Name**: `CODEOBA_TAURI_LATEST_JSON_URL`

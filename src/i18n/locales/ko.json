@@ -151,10 +151,10 @@
       "confirmDeleteSource": "정말로 {source}에 대한 Codeoba의 로컬 검색 인덱스 및 캐시된 세션을 지우시겠습니까? 이 작업은 검색 결과에서 소스를 제거하지만, 실제 에이전트 애플리케이션, 대화 또는 로그 파일을 삭제하거나 영향을 미치지 않습니다.",
       "detectedMultiPromptTitle": "로컬 검색 활성화",
       "detectedMultiPromptBadge": "100% 로컬 및 개인정보 보호",
-      "detectedMultiPromptMessage": "Codeoba가 시스템에서 다음 에이전트 대화 기록을 찾았습니다. 인덱싱할 앱을 선택하십시오. 데이터는 컴퓨터 외부에 전송되지 않습니다:",
+      "detectedMultiPromptMessage": "Codeoba가 시스템에서 다음 에전트 채팅 기록을 발견했습니다. 인덱싱할 앱을 선택하십시오. 대화 데이터는 컴퓨터 외부로 전송되지 않습니다.",
       "detectedMultiPromptDenyAll": "나중에 설정",
       "detectedMultiPromptAllowSelected": "선택한 애플리케이션 활성화",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% 개인정보 보호: 모든 검색 파싱 및 인덱스 구축은 기기에서 완전히 오프라인으로 실행됩니다.",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% 개인정보 보호: 모든 검색 파싱 및 인덱스 구축은 기기에서 완전히 오프라인으로 실행됩니다. 선택 사항인 클라우드 기능(업데이트 확인 등)은 필요한 메타데이터만 백엔드와 통신합니다.",
       "detectedMultiPromptFootnoteEmpty": "🔍 필수: 소스를 승인하지 않으면 검색 결과가 비어 있게 됩니다."
     },
     "semantic": {

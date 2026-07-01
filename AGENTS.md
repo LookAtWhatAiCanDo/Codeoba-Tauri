@@ -97,10 +97,12 @@ When modifying the frontend web components, adhere to these styling guidelines:
    - Run tokenization and inference asynchronously in a background thread pool (e.g., using `tokio` or `rayon`) to prevent blocking the UI thread.
    - Store computed vectors locally in `~/.codeoba/cache/embeddings_cache.json` using the keyring encryption key.
 
-4. **Dynamic WASM Premium Module Execution (`premium.wasm`)**:
-   - **Verification**: The client downloads the signed module and verifies its signature against the public KMS release key using `ed25519-dalek`.
-   - **Execution**: The Rust backend executes the WASM binary using `wasmtime` or `wasmer` inside the backend process.
-   - **Data Transfer**: Exchange session details and summaries between Rust and WASM by passing lightweight JSON serialization strings.
+4. **Dynamic WASM Premium Module Execution (`premium.wasm` Target Architecture)**:
+   - **Current Implementation Status**: The Tauri client currently has premium features stubbed as inactive (i.e., `is_premium_active()` in `./src-tauri/src/premium/mod.rs` returns `false` by default). The backend currently hosts and serves `premium.jar` (Java JAR payload) which is consumed exclusively by the legacy Kotlin client (`Codeoba-Kotlin`), and `weights.bin` in Firebase Storage.
+   - **Planned WASM Target Architecture**:
+     * **Verification**: Once fully ported, the Tauri client will download the signed WASM module and verify its signature against the public KMS release key using `ed25519-dalek`.
+     * **Execution**: The Rust backend will execute the WASM binary using `wasmtime` or `wasmer` inside the backend process.
+     * **Data Transfer**: Exchange session details and summaries between Rust and WASM by passing lightweight JSON serialization strings.
 
 5. **Keychain Credential Storage**:
    - Retrieve and save credentials (tokens, billing JWTs, encryption key) via the Rust `keyring` crate.

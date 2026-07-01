@@ -151,10 +151,10 @@
       "confirmDeleteSource": "Êtes-vous sûr de vouloir effacer l'index de recherche local et les sessions en cache de Codeoba pour {source} ? Cela le supprimera des résultats de recherche, mais ne supprimera pas et n'affectera pas l'application de votre agent réel, vos conversations ou vos fichiers journaux.",
       "detectedMultiPromptTitle": "Activer la recherche locale",
       "detectedMultiPromptBadge": "100% LOCAL & PRIVÉ",
-      "detectedMultiPromptMessage": "Codeoba a trouvé les historiques de chat d'agents suivants sur votre système. Sélectionnez les applications à indexer. Aucune donnée ne quitte votre ordinateur :",
+      "detectedMultiPromptMessage": "Codeoba a trouvé les historiques de chat d'agents suivants sur votre système. Sélectionnez les applications que vous souhaitez indexer. Aucune donnée de conversation ne quitte votre ordinateur :",
       "detectedMultiPromptDenyAll": "Configurer plus tard",
       "detectedMultiPromptAllowSelected": "Activer les applications sélectionnées",
-      "detectedMultiPromptFootnotePrivate": "🔒 100% Privé : Toutes les analyses et créations d'index s'effectuent entièrement hors ligne sur votre appareil.",
+      "detectedMultiPromptFootnotePrivate": "🔒 100% Privé : Toutes les analyses et créations d'index s'effectuent entièrement hors ligne sur votre appareil. Les fonctionnalités cloud facultatives (telles que les vérifications de mise à jour) ne communiquent que les métadonnées nécessaires à notre backend,",
       "detectedMultiPromptFootnoteEmpty": "🔍 Requis : Si vous n'autorisez aucune source, les résultats de la recherche resteront vides."
     },
     "semantic": {
