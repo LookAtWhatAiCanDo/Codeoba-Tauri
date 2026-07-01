@@ -841,7 +841,7 @@ mod watcher_tests {
         handle_file_change(&app_handle, &pb_file);
 
         // 6. Give the async reload handler a moment to execute
-        std::thread::sleep(std::time::Duration::from_millis(600));
+        std::thread::sleep(std::time::Duration::from_millis(1500));
 
         // 7. Check if the session title in the index was updated!
         let idx = app_handle.state::<SearchIndexState>();
