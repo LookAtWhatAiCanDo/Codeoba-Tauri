@@ -56,7 +56,11 @@
       "endpoints": [
         "https://dev.codeoba.com/api/update"
       ],
-      "dialog": false
+      "dialog": false,
+      "windows": {
+        "installMode": "passive",
+        "installerArgs": ["/UPDATE"]
+      }
     }
   }
 }
