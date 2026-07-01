@@ -34,13 +34,13 @@ modules:
       # FOR LOCAL TESTING: Points to the local build output
       # ========================================================================
       - type: file
-        path: ../src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb/codeoba_0.3.9_amd64.deb
+        path: ../src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb/codeoba_0.3.10_amd64.deb
         dest-filename: codeoba.deb
 
       # ========================================================================
       # FOR PRODUCTION FLATHUB RELEASES: Un-comment this block and update URL/SHA256
       # ========================================================================
       # - type: file
-      #   url: https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/v0.3.9/codeoba_0.3.9_amd64.deb
+      #   url: https://github.com/LookAtWhatAiCanDo/Codeoba/releases/download/v0.3.10/codeoba_0.3.10_amd64.deb
       #   sha256: "<insert-sha256-hash-here>"
       #   dest-filename: codeoba.deb
